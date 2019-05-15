@@ -1,0 +1,26 @@
+# Ignore everything in the root
+/*
+/login/*
+/apiserver/*
+/login/tests/__pycache__
+#/login/tests/__pycache__/*
+# Un-ignore these files - it's bit of a clonky way to do it but it's more secure
+!login/
+!login/__init__.py
+!login/admin.py
+!login/apps.py
+!login/models.py
+!login/response_builder.py
+!login/serializers.py
+!login/tests/
+!login/urls.py
+!login/views.py
+!.gitignore
+!apiserver/
+!apiserver/settings-example.py
+!apiserver/__init__.py
+!apiserver/README.md
+!apiserver/settings-example.py
+!apiserver/urls.py
+!apiserver/validators.py
+!apiserver/wsgi.py
