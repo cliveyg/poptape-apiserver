@@ -2,6 +2,7 @@
 /*
 /login/*
 /apiserver/*
+/reverse_proxy/*
 /login/tests/__pycache__
 #/login/tests/__pycache__/*
 # Un-ignore these files - it's bit of a clonky way to do it but it's more secure
