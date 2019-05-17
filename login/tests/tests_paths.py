@@ -42,9 +42,13 @@ class ViewTestCase01(APITestCase):
         
         # test the api can get a given url
         self.client = APIClient()
+        self.client.credentials(HTTP_X_FORWARDED_PROTO='https')
 
         url = reverse('details', args=[self.test_url.apiserver_url])
-        response = self.client.get(url, format="json")
+        header = {'HTTP-X-Forwarded-Proto': 'https'}
+        response = self.client.get(url, 
+                                   content_type='application/json', 
+                                   format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -98,9 +102,13 @@ class ViewTestCase03(APITestCase):
 
         # test the api can get correct content for a given url
         self.client = APIClient()
+        self.client.credentials(HTTP_X_FORWARDED_PROTO='https')
 
         url = reverse('details', args=["apiserver/login/status"])
-        response = self.client.get(url, format="json")
+        response = self.client.get(url,
+                                   headers={'X-Forwarded-Proto': 'https'},
+                                   content_type='application/json',
+                                   format="json")        
         content = json.loads(response.content.decode())
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -198,10 +206,14 @@ class ViewTestCase05(APITestCase):
 
         # test the api can get correct content for a given url
         self.client = APIClient()
+        self.client.credentials(HTTP_X_FORWARDED_PROTO='https')
         self.client.force_authenticate(user=self.user)
 
         url = reverse('details', args=["apiserver/login/status"])
-        response = self.client.get(url, format="json")
+        response = self.client.get(url,
+                                   headers={'X-Forwarded-Proto': 'https'},
+                                   content_type='application/json',
+                                   format="json")
         content = json.loads(response.content.decode())
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -219,7 +231,7 @@ class ViewTestCase06(APITestCase):
 
     def setUp(self):
         # define the test db record and any other test variables
-        #logging.disable(logging.CRITICAL)
+        logging.disable(logging.CRITICAL)
         self.user = User.objects.create(username="clive")
 
     def test_api_returns_201_for_post(self):

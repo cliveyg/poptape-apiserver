@@ -2,8 +2,10 @@
 /*
 /login/*
 /apiserver/*
+/apiserver/.env
 /reverse_proxy/*
 /login/tests/__pycache__
+/apiserver/tests/__pycache__
 #/login/tests/__pycache__/*
 # Un-ignore these files - it's bit of a clonky way to do it but it's more secure
 !login/
@@ -18,10 +20,12 @@
 !login/views.py
 !.gitignore
 !apiserver/
-!apiserver/settings-example.py
+!apiserver/.env.example
 !apiserver/__init__.py
 !apiserver/README.md
 !apiserver/settings-example.py
 !apiserver/urls.py
 !apiserver/validators.py
 !apiserver/wsgi.py
+!apiserver/tests/
+!requirements.txt

@@ -18,12 +18,14 @@ from django.conf.urls import url, include
 from rest_framework.urlpatterns import format_suffix_patterns
 from .views import CreateView, DetailsView, GetLoginURL
 from reverse_proxy.views import ProxyView
+#from django.views.decorators.csrf import csrf_exempt
 
 urlpatterns = [
         url(r'^apiserver/login/auth/', include('rest_framework.urls', namespace='rest_framework')),
         url(r'^apiserver/login/urls/$', CreateView.as_view(), name="create"),
         #url(r'^apiserver/login(?P<login_url>.+)$', GetLoginURL.as_view(), name="details"),
         url(r'^(?P<login_url>.+)$', GetLoginURL.as_view(), name="details"),
+        #url(r'^(?P<login_url>.+)$', csrf_exempt(GetLoginURL.as_view()), name="details"),
         #url(r'^(?P<testy_url>.+)/$', DetailsView.as_view(), name="testy"),
 ]
 

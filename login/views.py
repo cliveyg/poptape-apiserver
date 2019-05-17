@@ -1,7 +1,8 @@
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+#from apiserver.csrfexemption import CsrfExemptSessionAuthentication
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework import generics
+from rest_framework.generics import ListCreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView
 
 from .models import URL
 from .serializers import LoginSerializer
@@ -13,7 +14,7 @@ logger = logging.getLogger('apiserver')
 
 # -----------------------------------------------------------------------------
 
-class CreateView(generics.ListCreateAPIView):
+class CreateView(ListCreateAPIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
     # this class defines the create behavior of our rest api
@@ -35,7 +36,7 @@ class CreateView(generics.ListCreateAPIView):
 
 # -----------------------------------------------------------------------------
 
-class DetailsView(generics.RetrieveUpdateDestroyAPIView):
+class DetailsView(RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
     # This class handles the http GET, PUT and DELETE requests.
@@ -50,12 +51,18 @@ class DetailsView(generics.RetrieveUpdateDestroyAPIView):
 
 # -----------------------------------------------------------------------------
 
-class GetLoginURL(generics.ListAPIView):
+class GetLoginURL(ListAPIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
+    #authentication_classes = (CsrfExemptSessionAuthentication,)
 
     # retrieves a model based on the inbound url
 
     serializer_class = LoginSerializer
+
+    def dispatch(self, request, *args, **kwargs):
+        logger.info("In dispatch")
+        return super(GetLoginURL, self).dispatch(request, *args, **kwargs)
+    
 
     def get_queryset(self):
         # this view should return a single object based on the input url
@@ -71,12 +78,29 @@ class GetLoginURL(generics.ListAPIView):
         return url_model
 
 
-    # override the list method so we can return a 404 if we need to
+    # override the list method so we can return whatever status codes we need
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         if queryset.count() == 0:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
+        if request.content_type != "application/json":
+            message = { 'message': 'Incorrect Content-Type header - JSON only allowed' }
+            return Response(message, status=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
+
+        dict1 = queryset.values('methods').get()
+        methods = dict1.get('methods')
+
+        if request.method not in methods:
+            message = { 'message': 'Unsuitable method for this url' }
+            return Response(message, status=status.HTTP_405_METHOD_NOT_ALLOWED)            
+
+        proto_header = request.headers.get('X-Forwarded-Proto')
+
+        if proto_header != "HTTPS" and proto_header != "https":
+            message = { 'message': 'You must use https' }
+            return Response(message, status=status.HTTP_406_NOT_ACCEPTABLE)            
 
         # return a reduced set of the data for non-authenticated requests
         #if request.user.is_authenticated:

@@ -16,9 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf.urls import url, include
+from .views import StatusView, AllStatusView
 
 urlpatterns = [
     path('apiserver/admin/', admin.site.urls),
+    path('apiserver/status', StatusView.as_view(), name="status"),
+    path('apiserver/status/all', AllStatusView.as_view(), name="allstatus"),
     #path('apiserver/login/', include('login.urls')),
     url(r'^', include('login.urls')),
     #url(r'^api-auth/', include('rest_framework.urls'))

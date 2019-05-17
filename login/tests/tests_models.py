@@ -150,7 +150,7 @@ class ModelTestCase06(TestCase):
                              active = True,
                              methods = self.methods_list)
 
-    def test_model_does_create_a_url_entry_4(self):
+    def test_model_does_create_a_url_entry_1(self):
         with self.assertRaises(ValidationError) as valerr:
             self.modeltest.full_clean()
 
@@ -195,7 +195,7 @@ class ModelTestCase08(TestCase):
                              active = "Maybe",
                              methods = self.methods_list)
 
-    def test_model_does_create_a_url_entry_5(self):
+    def test_model_does_create_a_url_entry_3(self):
         with self.assertRaises(ValidationError) as valerr:
             self.modeltest.full_clean()
 
@@ -211,7 +211,7 @@ class ModelTestCase09(TestCase):
         self.login_api_url = "login/status"
         self.methods_list = ["POST", "GET", "PUT", "DELETE"]
 
-    def test_model_does_not_create_a_url_entry_6(self):
+    def test_model_does_not_create_a_url_entry_4(self):
         try:
             self.modeltest = URL(apiserver_url = self.apiserver_url,
                                  login_api_url = self.login_api_url,
