@@ -1,6 +1,6 @@
 from django.db import models
 from multiselectfield import MultiSelectField
-from apiserver.validators import validate_apiserver_url, validate_login_url
+from apiserver.validators import validate_apiserver_url, validate_login_url, validate_api_rules
 
 class HTTPMethod(models.Model):
     GET = 'GET'
@@ -18,9 +18,11 @@ class HTTPMethod(models.Model):
 
 class URL(models.Model):
     apiserver_url = models.CharField(max_length=400, blank=False, unique=True, validators=[validate_apiserver_url])
-    login_api_url = models.CharField(max_length=400, blank=False, unique=True, validators=[validate_login_url])
+    login_api_url = models.CharField(max_length=400, blank=False, validators=[validate_login_url])
     ip_address_limiter = models.TextField(blank=True, null=True)
     access_level = models.IntegerField(default=10)
+    api_rules = models.TextField(blank=False, null=False, unique=True, validators=[validate_api_rules])
+    #api_rules = models.JSONField(blank=True, null=True, validators=[validate_api_rules]) 
     active = models.BooleanField(default=True)
     methods = MultiSelectField(choices=HTTPMethod.METHOD_CHOICES, null=True, max_length=20)
     owner = models.ForeignKey('auth.User',

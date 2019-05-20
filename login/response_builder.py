@@ -5,10 +5,10 @@
 # and sometimes we need to build a response from several microservices
 from rest_framework import status
 from rest_framework.response import Response
-#from reverse_proxy.views import ProxyView
 from reverse_proxy.microservice import fetch_data
-#from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
+from celery import shared_task, group
+import time
 
 # get an instance of a logger
 import logging
@@ -36,10 +36,27 @@ def BuildAPIResponse(**kwargs):
         upstream_server = settings.LOGIN_SERVER_URL
         full_url = upstream_server + upstream_url
         logger.info("FULL URL [%s]", full_url)
+        result = testing_task.apply_async()
+
+        while not result.ready():
+           pass 
+
+        logger.info("Result id [%s]", result.id)
+
+        logger.info("Actual result [%s]",result.result)
+        result.forget()
 
         return fetch_data(request=request, upstream_url=full_url) 
 
-    return Response(queryset.values(), status=status.HTTP_200_OK)
+    #return Response(queryset.values(), status=status.HTTP_200_OK)
+    return Response({ 'foo': 'bar'}, status=417)
 
 # -----------------------------------------------------------------------------
 
+@shared_task
+def testing_task():
+    logger.info("In me task eating your greens")
+    time.sleep(10)
+    logger.info("That was yummy")
+    foovar = "bar"
+    return foovar

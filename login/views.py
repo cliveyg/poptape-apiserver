@@ -100,7 +100,7 @@ class GetLoginURL(ListAPIView):
 
         if proto_header != "HTTPS" and proto_header != "https":
             message = { 'message': 'You must use https' }
-            return Response(message, status=status.HTTP_406_NOT_ACCEPTABLE)            
+            return Response(message, status=status.HTTP_406_NOT_ACCEPTABLE)
 
         # return a reduced set of the data for non-authenticated requests
         #if request.user.is_authenticated:
