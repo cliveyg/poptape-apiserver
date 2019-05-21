@@ -8,6 +8,10 @@ import json
 from .assertions import assert_valid_schema
 import os.path
 
+# get an instance of a logger
+import logging
+logger = logging.getLogger('apiserver')
+
 # -----------------------------------------------------------------------------
 
 def validate_apiserver_url(value):
@@ -30,6 +34,8 @@ def validate_url(value, url):
 # -----------------------------------------------------------------------------
 
 def validate_api_rules(data):
+
+    #logger.info("INPUT TO VALIDATOR: [%s]",data)
 
     try:
         json_data = json.loads(data)
