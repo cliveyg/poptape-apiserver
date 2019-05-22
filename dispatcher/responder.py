@@ -46,8 +46,6 @@ def BuildAPIResponse(**kwargs):
 
     # we need to get the full url for each url. the reason we're doing
     # it this way is so we can get server names from the .env file
-    logger.info("URL is [%s]", url)
-    logger.info("No of urls found is [%s]", len(url_list))
     full_urls = []
     error = False
     fields =[]
@@ -83,7 +81,6 @@ def BuildAPIResponse(**kwargs):
 
     if len(full_urls) > 0: 
         status_code, data = fetch_data(request=request, upstream_urls=full_urls) 
-        logger.info("RETURNED STAT IS [%s]",status_code)
         if status_code == 200:
             return _builder(data, fields, request.path, uuid)
         
@@ -139,8 +136,6 @@ def _build_headers(headers):
 # -----------------------------------------------------------------------------
 
 def _create_django_response_from_requests(response):
-
-    logger.info("In create_django_response_from_requests")
 
     headers = _build_headers(response.headers)
 
