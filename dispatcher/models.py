@@ -33,8 +33,8 @@ class URL(models.Model):
         """A string representation of the model."""
         active_str = ""
         if self.active:
-            active_str = " [active]"
+            active_str = " - active"
         else:
-            active_str = " [inactive]"
-        return self.apiserver_url+" . . . . . "+active_str
+            active_str = " - inactive"
+        return self.apiserver_url+" ["+str(self.methods)+"] "+active_str
 

@@ -1,7 +1,7 @@
-# api/serializers.py
+# dispatcher/serializers.py
 
 from rest_framework import serializers
-from .models import URL
+from dispatcher.models import URL
 
 
 class URLSerializer(serializers.ModelSerializer):

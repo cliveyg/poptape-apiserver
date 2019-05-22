@@ -44,7 +44,8 @@ class ViewTestCase01(APITestCase):
         self.client = APIClient()
         self.client.credentials(HTTP_X_FORWARDED_PROTO='https')
 
-        url = reverse('details', args=[self.test_url.apiserver_url])
+        #url = reverse('details', args=[self.test_url.apiserver_url], kwargs=[url=self.test_url.apiserver_url])
+        url = reverse('details', kwargs={ 'url': self.test_url.apiserver_url})
         header = {'HTTP-X-Forwarded-Proto': 'https'}
         response = self.client.get(url, 
                                    content_type='application/json', 
@@ -69,7 +70,8 @@ class ViewTestCase02(APITestCase):
         # test the api can get a given url
         self.client = APIClient()
 
-        url = reverse('details', args=["apiserver/login/noexisty"])
+        #url = reverse('details', args=["apiserver/login/noexisty"])
+        url = reverse('details', kwargs={ 'url': 'apiserver/nopelogin/noexisty'})
         response = self.client.get(url, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -104,7 +106,8 @@ class ViewTestCase03(APITestCase):
         self.client = APIClient()
         self.client.credentials(HTTP_X_FORWARDED_PROTO='https')
 
-        url = reverse('details', args=["apiserver/login/status"])
+        #url = reverse('details', args=["apiserver/login/status"])
+        url = reverse('details', kwargs={ 'url': self.test_url.apiserver_url})
         response = self.client.get(url,
                                    headers={'X-Forwarded-Proto': 'https'},
                                    content_type='application/json',
@@ -209,7 +212,8 @@ class ViewTestCase05(APITestCase):
         self.client.credentials(HTTP_X_FORWARDED_PROTO='https')
         self.client.force_authenticate(user=self.user)
 
-        url = reverse('details', args=["apiserver/login/status"])
+        #url = reverse('details', args=["apiserver/login/status"])
+        url = reverse('details', kwargs={ 'url': self.test_url.apiserver_url})
         response = self.client.get(url,
                                    headers={'X-Forwarded-Proto': 'https'},
                                    content_type='application/json',
