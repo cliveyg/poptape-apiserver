@@ -33,3 +33,5 @@
 !apiserver/tests/tests_paths.py
 !apiserver/tests/__init__.py
 !requirements.txt
+!apiserver/schemas/
+!apiserver/schemas/*
