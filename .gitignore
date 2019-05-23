@@ -6,6 +6,7 @@
 /reverse_proxy/*
 /dispatcher/tests/__pycache__
 /apiserver/tests/__pycache__
+/dispatcher/migrations/__pycache__
 #/dispatcher/tests/__pycache__/*
 # Un-ignore these files - it's bit of a clonky way to do it but it's more secure
 !dispatcher/
@@ -22,6 +23,8 @@
 !dispatcher/tests/__init__.py
 !dispatcher/urls.py
 !dispatcher/views.py
+!dispatcher/migrations/
+!dispatcher/migrations/__init__.py
 !.gitignore
 !apiserver/
 !apiserver/.env.example

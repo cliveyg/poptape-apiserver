@@ -27,12 +27,10 @@ class CreateView(ListCreateAPIView):
 
     def perform_create(self, serializer):
         # save the post data when creating a new url
-        logger.info("CreateView:perform_create")
         serializer.save()
 
 
     def list(self, request, *args, **kwargs):
-        logger.info("CreateView:list")
         queryset = self.filter_queryset(self.get_queryset())
         only_active_urls = queryset.filter(active=True)
 
@@ -48,7 +46,6 @@ class DetailsView(RetrieveUpdateDestroyAPIView):
     serializer_class = URLSerializer
 
     def list(self, request, *args, **kwargs):
-        #logger.info("DetailsView:list")
         queryset = self.filter_queryset(self.get_queryset())
 
         return Response(queryset.values(), status=status.HTTP_200_OK)
@@ -64,14 +61,12 @@ class GetMicroURL(ListAPIView):
     serializer_class = URLSerializer
 
     def dispatch(self, request, *args, **kwargs):
-        logger.info("In dispatch")
         return super(GetMicroURL, self).dispatch(request, *args, **kwargs)
     
 
     def get_queryset(self):
         # this view should return a single object based on the input url
         micro_url = self.kwargs['micro_url']
-        #logger.debug("login url is [%s]", login_url)
 
         # only return the object if it's active
         url_model = URL.objects.filter(apiserver_url=micro_url).filter(active=True)
@@ -126,7 +121,6 @@ class GetUserURL(ListAPIView):
     serializer_class = URLSerializer
 
     def dispatch(self, request, *args, **kwargs):
-        logger.info("In dispatch")
         return super(GetUserURL, self).dispatch(request, *args, **kwargs)
 
 
@@ -175,14 +169,12 @@ class GetLoginURL(ListAPIView):
     serializer_class = URLSerializer
 
     def dispatch(self, request, *args, **kwargs):
-        logger.info("In dispatch")
         return super(GetLoginURL, self).dispatch(request, *args, **kwargs)
 
 
     def get_queryset(self):
         # 
         micro_url = self.kwargs['micro_url']
-        #logger.debug("login url is [%s]", login_url)
 
         # only return the object if it's active
         url_model = URL.objects.filter(apiserver_url=micro_url).filter(active=True)
@@ -249,7 +241,6 @@ class Error404(APIView):
 def _passes_basic_checks(request, queryset, url):
 
     if queryset.count() == 0:
-        logger.info("Nothing returned for URL [%s]", url)
         return False, Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.content_type != "application/json":

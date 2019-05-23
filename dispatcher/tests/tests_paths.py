@@ -27,7 +27,7 @@ class ViewTestCase01(APITestCase):
         # define the test db record and any other test variables
         user = User.objects.create(username="clive")
         self.apiserver_url = "apiserver/login/status"
-        self.api_rules = "[{ \"url\": \"url/number/1\", \"fields\": [\"one\"]}]"
+        self.api_rules = "[{ \"url\": \"login/status\", \"fields\": [\"message\"]}]"
         self.methods_list = ["GET", "POST"]
 
         self.test_url = URL(apiserver_url = self.apiserver_url,
@@ -45,7 +45,8 @@ class ViewTestCase01(APITestCase):
         self.client.credentials(HTTP_X_FORWARDED_PROTO='https')
 
         #url = reverse('details', args=[self.test_url.apiserver_url], kwargs=[url=self.test_url.apiserver_url])
-        url = reverse('details', kwargs={ 'url': self.test_url.apiserver_url})
+        kwargs={'micro_url': self.apiserver_url}
+        url = reverse('user_details', kwargs=kwargs)
         header = {'HTTP-X-Forwarded-Proto': 'https'}
         response = self.client.get(url, 
                                    content_type='application/json', 
@@ -71,7 +72,8 @@ class ViewTestCase02(APITestCase):
         self.client = APIClient()
 
         #url = reverse('details', args=["apiserver/login/noexisty"])
-        url = reverse('details', kwargs={ 'url': 'apiserver/nopelogin/noexisty'})
+        kwargs={'micro_url': 'apiserver/nopelogin/noexisty'}
+        url = reverse('user_details', kwargs=kwargs)
         response = self.client.get(url, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -89,7 +91,7 @@ class ViewTestCase03(APITestCase):
         logging.disable(logging.CRITICAL)
         user = User.objects.create(username="clive")
         self.apiserver_url = "apiserver/login/status"
-        self.api_rules = "[{ \"url\": \"url/number/1\", \"fields\": [\"one\"]}]"
+        self.api_rules = "[{ \"url\": \"login/status\", \"fields\": [\"message\"]}]"        
         self.methods_list = ["GET", "POST"]
 
         self.test_url = URL(apiserver_url = self.apiserver_url,
@@ -107,7 +109,8 @@ class ViewTestCase03(APITestCase):
         self.client.credentials(HTTP_X_FORWARDED_PROTO='https')
 
         #url = reverse('details', args=["apiserver/login/status"])
-        url = reverse('details', kwargs={ 'url': self.test_url.apiserver_url})
+
+        url = reverse('user_details', kwargs={ 'micro_url': self.apiserver_url})
         response = self.client.get(url,
                                    headers={'X-Forwarded-Proto': 'https'},
                                    content_type='application/json',
@@ -115,11 +118,10 @@ class ViewTestCase03(APITestCase):
         content = json.loads(response.content.decode())
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(content[0].get('apiserver_url'), 'apiserver/login/status')
-        self.assertEqual(content[0].get('methods'), ["GET", "POST"])
+        self.assertEqual(content.get('request_url'), '/apiserver/login/status')
         # check that no access_level field is returned - so we know correct data
         # return for unauthenticated call
-        self.assertEqual(content[0].get('access_level'), None)
+        #self.assertEqual(content[0].get('access_level'), None)
 
 # -----------------------------------------------------------------------------
 # test the api returns list from /apiserver/dispatcher/urls/
@@ -194,7 +196,7 @@ class ViewTestCase05(APITestCase):
         logging.disable(logging.CRITICAL)
         self.user = User.objects.create(username="clive")
         self.apiserver_url = "apiserver/login/status"
-        self.api_rules = "[{ \"url\": \"url/number/1\", \"fields\": [\"one\"]}]"
+        self.api_rules = "[{ \"url\": \"login/status\", \"fields\": [\"message\"]}]"
         self.methods_list = ["GET", "POST"]
 
         self.test_url = URL(apiserver_url = self.apiserver_url,
@@ -212,8 +214,7 @@ class ViewTestCase05(APITestCase):
         self.client.credentials(HTTP_X_FORWARDED_PROTO='https')
         self.client.force_authenticate(user=self.user)
 
-        #url = reverse('details', args=["apiserver/login/status"])
-        url = reverse('details', kwargs={ 'url': self.test_url.apiserver_url})
+        url = reverse('user_details', kwargs={ 'micro_url': self.apiserver_url})
         response = self.client.get(url,
                                    headers={'X-Forwarded-Proto': 'https'},
                                    content_type='application/json',
@@ -221,10 +222,9 @@ class ViewTestCase05(APITestCase):
         content = json.loads(response.content.decode())
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(content[0].get('apiserver_url'), 'apiserver/login/status')
-        self.assertEqual(content[0].get('methods'), ["GET", "POST"])
+        self.assertEqual(content.get('request_url'), '/apiserver/login/status')
         # authenticated user returns extra fields such as access_level
-        self.assertEqual(content[0].get('access_level'), 10)
+        self.assertEqual(content.get('access_level'), 10)
 
 # -----------------------------------------------------------------------------
 # test the api returns 201 for created url

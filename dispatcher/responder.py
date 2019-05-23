@@ -66,8 +66,12 @@ def BuildAPIResponse(**kwargs):
         #TODO: need to make this more general
         if uuid:
             new_rest_of_url = re.sub('<public_id>', uuid, rest_of_url)
+            full_url = full_url + microservice_name + "/" + new_rest_of_url
+        elif rest_of_url != None:
+            full_url = full_url + microservice_name + "/" + rest_of_url
+        else:
+            full_url = full_url + microservice_name
 
-        full_url = full_url + microservice_name + "/" + new_rest_of_url
         
         # need some way of tracking which request/response is linked to which
         # api rule. a simple count can achieve this
