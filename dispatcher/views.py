@@ -133,8 +133,12 @@ class GetUserURL(ListAPIView):
         else:
             self.uuid = None
 
-        # only return the object if it's active
-        url_model = URL.objects.filter(apiserver_url__icontains=self.micro_url).filter(active=True)
+        # only return the object if it's active and should only return exact match if there is not a uuid
+        # in url
+        if self.uuid:
+            url_model = URL.objects.filter(apiserver_url__icontains=self.micro_url).filter(active=True)
+        else:
+            url_model = URL.objects.filter(apiserver_url=self.micro_url).filter(active=True)
 
         return url_model
 
@@ -142,6 +146,8 @@ class GetUserURL(ListAPIView):
     # override the list method so we can return whatever status codes we need
 
     def list(self, request, *args, **kwargs):
+
+        logger.info("In ya list")
 
         queryset = self.filter_queryset(self.get_queryset())
 

@@ -224,7 +224,9 @@ class ViewTestCase05(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(content.get('request_url'), '/apiserver/login/status')
         # authenticated user returns extra fields such as access_level
-        self.assertEqual(content.get('access_level'), 10)
+        #self.assertEqual(content.get(''), 10)
+        print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
+        print(content)
 
 # -----------------------------------------------------------------------------
 # test the api returns 201 for created url
@@ -237,7 +239,7 @@ class ViewTestCase06(APITestCase):
         # define the test db record and any other test variables
         logging.disable(logging.CRITICAL)
         self.user = User.objects.create(username="clive")
-        self.api_rules = "[{ \"url\": \"url/number/1\", \"fields\": [\"one\"]}]"
+        self.api_rules = "[{ \"url\": \"url/number/1\", \"fields\": [{\"one\":\"one\"}]}]"
 
     def test_api_returns_201_for_post(self):
 

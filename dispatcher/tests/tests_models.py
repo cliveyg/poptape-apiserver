@@ -23,7 +23,7 @@ class ModelTestCase01(TestCase):
         # define the test client and other test variables
         user = User.objects.create(username="clive") 
         self.apiserver_url = "/apiserver/login/status"
-        self.api_rules = "[{ \"url\": \"url/number/1\", \"fields\": [\"one\"]}]"
+        self.api_rules = "[{ \"url\": \"url/number/1\", \"fields\": [{\"one\":\"one\"}]}]"
         self.api_rules = "/login/status"
         self.methods_list = ["GET", "POST"] 
         
@@ -49,7 +49,7 @@ class ModelTestCase02(TestCase):
         # define the test client and other test variables
         user = User.objects.create(username="clive")
         self.apiserver_url = "apiserver/login/status"
-        self.api_rules = "[{ \"url\": \"url/number/1\", \"fields\": [\"one\"]}]"
+        self.api_rules = "[{ \"url\": \"url/number/1\", \"fields\": [{\"one\":\"one\"}]}]"
         self.methods_list = ["GET", "POST"]
 
         self.modeltest = URL(apiserver_url = self.apiserver_url,
@@ -71,7 +71,7 @@ class ModelTestCase03(TestCase):
     def setUp(self):
         # define the test client and other test variables
         user = User.objects.create(username="clive")
-        self.api_rules = "[{ \"url\": \"url/number/1\", \"fields\": [\"one\"]}]"
+        self.api_rules = "[{ \"url\": \"url/number/1\", \"fields\": [{\"one\":\"one\"}]}]"
         self.apiserver_url = "/apiserver/login/status"
         self.methods_list = ["GET", "POST"]
 
@@ -118,7 +118,7 @@ class ModelTestCase05(TestCase):
         # define the test client and other test variables
         user = User.objects.create(username="clive")
         self.apiserver_url = "apiserver/login/status"
-        self.api_rules = "[{ \"url\": \"url/number/1\", \"fields\": [\"one\"]}]"
+        self.api_rules = "[{ \"url\": \"url/number/1\", \"fields\": [{\"one\":\"one\"}]}]"
         self.methods_list = ["NOTACORRECTVERB"]
 
         self.modeltest = URL(apiserver_url = self.apiserver_url,
@@ -141,7 +141,7 @@ class ModelTestCase06(TestCase):
         # define the test client and other test variables
         user = User.objects.create(username="clive")
         self.apiserver_url = "apiserver/login/status"
-        self.api_rules = "[{ \"url\": \"url/number/1\", \"fields\": [\"one\"]}]"
+        self.api_rules = "[{ \"url\": \"url/number/1\", \"fields\": [{\"one\":\"one\"}]}]"
         self.methods_list = ["PUT"]
 
         self.modeltest = URL(apiserver_url = self.apiserver_url,
@@ -164,7 +164,7 @@ class ModelTestCase07(TestCase):
         # define the test client and other test variables
         user = User.objects.create(username="clive")
         self.apiserver_url = "apiserver/login/status"
-        self.api_rules = "[{ \"url\": \"url/number/1\", \"fields\": [\"one\"]}]"
+        self.api_rules = "[{ \"url\": \"url/number/1\", \"fields\": [{\"one\":\"one\"}]}]"
         self.methods_list = ["POST", "GET", "PUT", "DELETE"]
 
         self.modeltest = URL(apiserver_url = self.apiserver_url,
@@ -186,7 +186,7 @@ class ModelTestCase08(TestCase):
         # define the test client and other test variables
         user = User.objects.create(username="clive")
         self.apiserver_url = "apiserver/login/status"
-        self.api_rules = "[{ \"url\": \"url/number/1\", \"fields\": [\"one\"]}]"
+        self.api_rules = "[{ \"url\": \"url/number/1\", \"fields\": [{\"one\":\"one\"}]}]"
         self.methods_list = ["POST", "GET", "PUT", "DELETE"]
 
         self.modeltest = URL(apiserver_url = self.apiserver_url,
@@ -209,7 +209,7 @@ class ModelTestCase09(TestCase):
         # define the test client and other test variables
         user = User.objects.create(username="clive")
         self.apiserver_url = "apiserver/login/status"
-        self.api_rules = "[{ \"url\": \"url/number/1\", \"fields\": [\"one\"]}]"
+        self.api_rules = "[{ \"url\": \"url/number/1\", \"fields\": [{\"one\":\"one\"}]}]"
         self.methods_list = ["POST", "GET", "PUT", "DELETE"]
 
     def test_model_does_not_create_a_url_entry_4(self):
@@ -233,7 +233,7 @@ class ModelTestCase10(TestCase):
         # define the test client and other test variables
         user = User.objects.create(username="clive")
         self.apiserver_url = "apiserver/login/status"
-        self.api_rules = "[{ \"url\": \"url/number/1\", \"fields\": [\"one\"]}]"
+        self.api_rules = "[{ \"url\": \"url/number/1\", \"fields\": [{\"one\":\"one\"}]}]"
         self.methods_list = ["POST", "GET", "PUT", "DELETE"]
 
         self.modeltest1 = URL(apiserver_url = self.apiserver_url,

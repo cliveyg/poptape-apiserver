@@ -29,7 +29,7 @@
 !apiserver/
 !apiserver/.env.example
 !apiserver/__init__.py
-!apiserver/README.md
+!README.md
 !apiserver/urls.py
 !apiserver/validators.py
 !apiserver/wsgi.py

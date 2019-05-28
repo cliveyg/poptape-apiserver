@@ -43,6 +43,7 @@ def BuildAPIResponse(**kwargs):
 
     dicky = queryset.values('api_rules').get()
     url_list = json.loads(dicky.get('api_rules'))    
+    logger.info("No of tings returned from qs is [%]", len(url_list))
 
     # we need to get the full url for each url. the reason we're doing
     # it this way is so we can get server names from the .env file
@@ -54,7 +55,12 @@ def BuildAPIResponse(**kwargs):
     for destination in url_list:
         full_url = None
         fields_dict = None
-        microservice_name, rest_of_url = destination['url'].split('/', 1)
+
+        if "/" in destination['url']:
+            microservice_name, rest_of_url = destination['url'].split('/', 1)
+        else:
+            microservice_name = destination['url']
+            rest_of_url = None
         
         if microservice_name == 'login':
             full_url = settings.LOGIN_SERVER_URL
@@ -63,7 +69,8 @@ def BuildAPIResponse(**kwargs):
         else:
             error = True
 
-        #TODO: need to make this more general
+        #TODO: need to make this more general to accept more than one possible
+        # variable
         if uuid:
             new_rest_of_url = re.sub('<public_id>', uuid, rest_of_url)
             full_url = full_url + microservice_name + "/" + new_rest_of_url
@@ -96,7 +103,7 @@ def BuildAPIResponse(**kwargs):
 
 def _builder(results, fields, request_path, uuid):
 
-    # the data should be in the form of an array of tuples. the tuple consists 
+    # the data should be in the form of an array of dicts. the dicts consists 
     # of a requests response and the original incoming request
     response_fields = []
 
@@ -112,6 +119,7 @@ def _builder(results, fields, request_path, uuid):
         response_fields.append(json_content)
 
     #TODO: need to delete unwanted fields 
+
     
     if uuid:
         return Response({ 'public_id': uuid,
