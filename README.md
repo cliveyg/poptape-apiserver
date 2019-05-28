@@ -9,6 +9,7 @@ suitable response based on the api rules contained in it's own database.
 The api rules are entered via the django admin. All rules are verified on input 
 using json schema. The api rules are an array of microservices to be called for
 the input url and are of the format:
+```
 [
 { "url": "/microservice/url1", "fields": [{"ms-field-name": "out-field-name"}]}
 { "url": "/microservice/url2", "fields": [{"ms2-field1": "output-field1"}
@@ -16,7 +17,7 @@ the input url and are of the format:
 .
 .
 ]
-
+```
 "url" and "field" are fixed names but the field names and what they transpose
 to can be anything. Output field names should be unique but json schema (v7)
 does not currently have any facility to check this - so user beware. The json
