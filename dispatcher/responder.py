@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from reverse_proxy.microservice import fetch_data
 from django.conf import settings
 
+import operator
 import time
 import json
 import re
@@ -43,18 +44,18 @@ def BuildAPIResponse(**kwargs):
 
     dicky = queryset.values('api_rules').get()
     url_list = json.loads(dicky.get('api_rules'))    
-    logger.info("No of tings returned from qs is [%]", len(url_list))
+    good_codes = dicky.get('expected_successful_responses')
 
     # we need to get the full url for each url. the reason we're doing
     # it this way is so we can get server names from the .env file
     full_urls = []
-    error = False
     fields =[]
     count = 1
 
     for destination in url_list:
         full_url = None
         fields_dict = None
+        error = False
 
         if "/" in destination['url']:
             microservice_name, rest_of_url = destination['url'].split('/', 1)
@@ -62,6 +63,8 @@ def BuildAPIResponse(**kwargs):
             microservice_name = destination['url']
             rest_of_url = None
         
+        #TODO: refactor this. don't like the hardcoded microservices here. 
+        # maybe use an array that can be read from .env
         if microservice_name == 'login':
             full_url = settings.LOGIN_SERVER_URL
         elif microservice_name == 'items':
@@ -81,9 +84,10 @@ def BuildAPIResponse(**kwargs):
 
         
         # need some way of tracking which request/response is linked to which
-        # api rule. a simple count can achieve this
-        dic_of_urls = {'id': count, 'url': full_url}
-        dic_of_fields = {'id': count, 'fields': destination['fields']}
+        # api rule. a simple count can achieve this. we need to do this as we're 
+        # sending async requests and can't guarantee return order
+        dic_of_urls = {'track_id': count, 'good_status_codes': good_codes, 'url': full_url}
+        dic_of_fields = {'track_id': count, 'fields': destination['fields']}
 
         if not error:
             full_urls.append(dic_of_urls)
@@ -95,11 +99,13 @@ def BuildAPIResponse(**kwargs):
         if status_code == 200:
             return _builder(data, fields, request.path, uuid)
         
-    return Response({ 'message': 'unable to succesfully construct response' }, status=status.HTTP_417_EXPECTATION_FAILED)
+    return Response({ 'message': 'unable to succesfully construct response' }, 
+                      status=status.HTTP_417_EXPECTATION_FAILED)
 
 # -----------------------------------------------------------------------------
 # match returned results against the original api rules to know how to build
-# the response with only selected fields
+# the response with only desired fields. may also need to transform the names
+# of the returned fields to something else
 
 def _builder(results, fields, request_path, uuid):
 
@@ -107,29 +113,51 @@ def _builder(results, fields, request_path, uuid):
     # of a requests response and the original incoming request
     response_fields = []
 
+    # we now create one big dictionary with all our returned data. that data
+    # can be identified by the track_id and matched to what we want our 
+    # output to be
     for result in results:
-        logger.debug(result)
+        #logger.debug(result)
         requests_response = result['upresp']
+        json_content = None
         try:
             json_content = requests_response.json()
         except ValueError as error:
             logger.error(str(error))
             pass
 
+        json_content['track_id'] = result['track_id']
         response_fields.append(json_content)
 
-    #TODO: need to delete unwanted fields 
+    # this sorting/matching of data has only been tested on relatively
+    # flat data structures. we may need some kind of recursion or something
+    # else for more complicated bit's of data. refactor in the future
 
-    
+    # we are matching/sorting on our track_id 
+    sorting_key = operator.itemgetter("track_id")
+    response_fields = sorted(response_fields, key=sorting_key)
+    fields = sorted(fields, key=sorting_key)
+    out_dic = {}
+
+    # we then use zip to join our dicts
+    for big_dict, j in zip(response_fields, fields):
+        big_dict.update(j)
+        # we then match using sets / dicts
+        for wanted_field in big_dict['fields']:
+            for key in set(wanted_field) & set(big_dict):
+                # and finally we want the value of the wanted field to be the
+                # key of our new field and the value of that to be the returned 
+                # value from the microservice(s). this effectively transforms
+                # the name of the field to what we wanted from the api rules
+                # database field
+                out_dic[wanted_field.get(key)] = big_dict.get(key)
+        
+    out_dic['request_url'] = request_path
+
     if uuid:
-        return Response({ 'public_id': uuid,
-                          'request_url': request_path, 
-                          'fields': response_fields }, 
-                          status=status.HTTP_200_OK) 
+        out_dic['public_id'] = uuid
 
-    return Response({ 'request_url': request_path,
-                      'fields': response_fields },
-                      status=status.HTTP_200_OK)
+    return Response(out_dic, status=status.HTTP_200_OK)
 
 # -----------------------------------------------------------------------------
 # need to remove any hop-by-hop headers and django says no to these and kicks

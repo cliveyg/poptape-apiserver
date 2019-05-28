@@ -271,7 +271,7 @@ class ViewTestCase07(APITestCase):
         logging.disable(logging.CRITICAL)
         self.user = User.objects.create(username="clive")
         self.apiserver_url = "apiserver/login/status"
-        self.api_rules = "[{ \"url\": \"url/number/1\", \"fields\": [\"one\"]}]"
+        self.api_rules = "[{ \"url\": \"url/number/1\", \"fields\": [{\"one\":\"one\"}]}]"
         self.methods_list = ["GET", "POST"]
 
         self.test_url = URL(apiserver_url = self.apiserver_url,
@@ -287,7 +287,7 @@ class ViewTestCase07(APITestCase):
         # test the api can get correct content for a given url
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
-        self.api_rules = "[{ \"url\": \"url/number/1\", \"fields\": [\"one\"]}]"
+        self.api_rules = "[{ \"url\": \"url/number/1\", \"fields\": [{\"one\":\"one\"}]}]"
 
         url = reverse('create')
         self.url_data = {'apiserver_url': 'apiserver/login/status',
@@ -311,7 +311,7 @@ class ViewTestCase08(APITestCase):
     def setUp(self):
         # define the test db record and any other test variables
         logging.disable(logging.CRITICAL)
-        self.api_rules = "[{ \"url\": \"url/number/1\", \"fields\": [\"one\"]}]"
+        self.api_rules = "[{ \"url\": \"url/number/1\", \"fields\": [{\"one\":\"one\"}]}]"
 
     def test_api_doesnt_allow_unauth_post(self):
 

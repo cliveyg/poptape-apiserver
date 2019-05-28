@@ -31,6 +31,7 @@ class ModelTestCase01(TestCase):
                              api_rules = self.api_rules, 
                              access_level = 10,
                              owner = user,
+                             expected_successful_responses = 200,
                              active = True,
                              methods = self.methods_list)
 
@@ -56,6 +57,7 @@ class ModelTestCase02(TestCase):
                              api_rules = self.api_rules,
                              access_level = 10,
                              owner = user,
+                             expected_successful_responses = 200,
                              active = True,
                              methods = self.methods_list)
 
@@ -79,6 +81,7 @@ class ModelTestCase03(TestCase):
                              api_rules = self.api_rules,
                              access_level = 10,
                              owner = user,
+                             expected_successful_responses = 200,
                              active = True,
                              methods = self.methods_list)
 
@@ -102,6 +105,7 @@ class ModelTestCase04(TestCase):
                              api_rules = self.api_rules,
                              access_level = 10,
                              owner = user,
+                             expected_successful_responses = 200,
                              active = True,
                              methods = self.methods_list)
 
@@ -125,6 +129,7 @@ class ModelTestCase05(TestCase):
                              api_rules = self.api_rules,
                              access_level = 10,
                              owner = user,
+                             expected_successful_responses = 200,
                              active = True,
                              methods = self.methods_list)
 
@@ -148,6 +153,7 @@ class ModelTestCase06(TestCase):
                              api_rules = self.api_rules,
                              access_level = "not a number",
                              owner = user,
+                             expected_successful_responses = 200,
                              active = True,
                              methods = self.methods_list)
 
@@ -171,6 +177,7 @@ class ModelTestCase07(TestCase):
                              api_rules = self.api_rules,
                              access_level = 10,
                              owner = user,
+                             expected_successful_responses = 200,
                              active = True,
                              methods = self.methods_list)
 
@@ -193,6 +200,7 @@ class ModelTestCase08(TestCase):
                              api_rules = self.api_rules,
                              access_level = 10,
                              owner = user,
+                             expected_successful_responses = 200,
                              active = "Maybe",
                              methods = self.methods_list)
 
@@ -217,6 +225,7 @@ class ModelTestCase09(TestCase):
             self.modeltest = URL(apiserver_url = self.apiserver_url,
                                  api_rules = self.api_rules,
                                  access_level = 10,
+                                 expected_successful_responses = 200,
                                  owner = "badguy",
                                  active = True,
                                  methods = self.methods_list)
@@ -240,6 +249,7 @@ class ModelTestCase10(TestCase):
                              api_rules = self.api_rules,
                              access_level = 10,
                              owner = user,
+                             expected_successful_responses = 200,
                              active = True,
                              methods = self.methods_list)
         self.modeltest1.save()
@@ -247,6 +257,7 @@ class ModelTestCase10(TestCase):
         self.modeltest2 = URL(apiserver_url = self.apiserver_url,
                              api_rules = self.api_rules,
                              access_level = 10,
+                             expected_successful_responses = 200,
                              owner = user,
                              active = True,
                              methods = self.methods_list)
@@ -254,3 +265,28 @@ class ModelTestCase10(TestCase):
     def test_model_test_duplicate(self):
         with self.assertRaises(IntegrityError):
             self.modeltest2.save()
+
+# -----------------------------------------------------------------------------
+# test the URL model doesn't accept non-numeric in expected_successful_responses
+
+class ModelTestCase11(TestCase):
+
+    def setUp(self):
+        # define the test client and other test variables
+        user = User.objects.create(username="clive")
+        self.apiserver_url = "apiserver/login/status"
+        self.api_rules = "[{ \"url\": \"url/number/1\", \"fields\": [{\"one\":\"one\"}]}]"
+        self.methods_list = ["PUT"]
+
+        self.modeltest = URL(apiserver_url = self.apiserver_url,
+                             api_rules = self.api_rules,
+                             access_level = 10,
+                             owner = user,
+                             expected_successful_responses = "not a number",
+                             active = True,
+                             methods = self.methods_list)
+
+    def test_model_does_create_a_url_entry_3(self):
+        with self.assertRaises(ValidationError) as valerr:
+            self.modeltest.full_clean()
+
