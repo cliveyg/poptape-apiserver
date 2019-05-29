@@ -32,9 +32,9 @@ Request headers are passed back and forth between the client and microservice
 but could potentially be restricted or transformed by this apiserver too.
 
 TODO:
-=====
-[1] Add throttling
-[2] Add Redis or similar store
-[3] Change DB to postgres or mysql
-[4] More tests
-[5] General bug fixes
+.....
+l. [1] Add throttling
+l. [2] Add Redis or similar store
+l. [3] Change DB to postgres or mysql
+l. [4] More tests
+l. [5] General bug fixes
