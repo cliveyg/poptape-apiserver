@@ -44,7 +44,8 @@ def BuildAPIResponse(**kwargs):
 
     dicky = queryset.values('api_rules').get()
     url_list = json.loads(dicky.get('api_rules'))    
-    good_codes = dicky.get('expected_successful_responses')
+    dick2 = queryset.values('expected_successful_responses').get()
+    good_codes = dick2.get('expected_successful_responses')
 
     # we need to get the full url for each url. the reason we're doing
     # it this way is so we can get server names from the .env file
@@ -86,7 +87,7 @@ def BuildAPIResponse(**kwargs):
         # need some way of tracking which request/response is linked to which
         # api rule. a simple count can achieve this. we need to do this as we're 
         # sending async requests and can't guarantee return order
-        dic_of_urls = {'track_id': count, 'good_status_codes': good_codes, 'url': full_url}
+        dic_of_urls = {'track_id': count, 'url': full_url}
         dic_of_fields = {'track_id': count, 'fields': destination['fields']}
 
         if not error:
@@ -94,13 +95,17 @@ def BuildAPIResponse(**kwargs):
             fields.append(dic_of_fields)
             count += 1
 
+    errors = []
     if len(full_urls) > 0: 
-        status_code, data = fetch_data(request=request, upstream_urls=full_urls) 
+        status_code, data, errors = fetch_data(request=request, 
+                                               good_codes=good_codes,
+                                               upstream_urls=full_urls) 
         if status_code == 200:
             return _builder(data, fields, request.path, uuid)
-        
-    return Response({ 'message': 'unable to succesfully construct response' }, 
-                      status=status.HTTP_417_EXPECTATION_FAILED)
+     
+    return Response({ 'message': 'unable to successfully build response',
+                      'errors': errors }, 
+                      status=status_code)
 
 # -----------------------------------------------------------------------------
 # match returned results against the original api rules to know how to build

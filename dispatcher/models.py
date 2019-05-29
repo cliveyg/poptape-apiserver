@@ -1,7 +1,6 @@
 from django.db import models
 from multiselectfield import MultiSelectField
-from apiserver.validators import validate_apiserver_url, validate_api_rules
-from django.core.validators import validate_comma_separated_integer_list
+from apiserver.validators import validate_apiserver_url, validate_api_rules, validate_http_codes
 
 class HTTPMethod(models.Model):
     GET = 'GET'
@@ -23,7 +22,7 @@ class URL(models.Model):
     access_level = models.IntegerField(default=99)
     active = models.BooleanField(default=True)
     methods = MultiSelectField(choices=HTTPMethod.METHOD_CHOICES, null=True, max_length=20)
-    expected_successful_responses = models.CharField(max_length=50, blank=False, validators=[validate_comma_separated_integer_list])
+    expected_successful_responses = models.CharField(max_length=50, blank=False, validators=[validate_http_codes])
     owner = models.ForeignKey('auth.User',
                               related_name='URL',
                               on_delete=models.PROTECT) 

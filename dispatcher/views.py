@@ -147,7 +147,7 @@ class GetUserURL(ListAPIView):
 
     def list(self, request, *args, **kwargs):
 
-        logger.info("In ya list")
+        #logger.info("In ya list")
 
         queryset = self.filter_queryset(self.get_queryset())
 
