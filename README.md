@@ -33,8 +33,8 @@ but could potentially be restricted or transformed by this apiserver too.
 
 TODO:
 .....
-l. [1] Add throttling
-l. [2] Add Redis or similar store
-l. [3] Change DB to postgres or mysql
-l. [4] More tests
-l. [5] General bug fixes
+* Add throttling
+* Add Redis or similar store
+* Change DB to postgres or mysql
+* More tests
+* General bug fixes
