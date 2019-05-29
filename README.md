@@ -31,8 +31,10 @@ restrictions can be added as to valid ip addresses.
 Request headers are passed back and forth between the client and microservice
 but could potentially be restricted or transformed by this apiserver too.
 
-TODO:
-.....
+------
+
+##### TODO:
+
 * Add throttling
 * Add Redis or similar store
 * Change DB to postgres or mysql
