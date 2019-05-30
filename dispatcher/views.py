@@ -71,10 +71,8 @@ class GetMicroserviceData(APIView):
         uuid = kwargs.get('uuid')
 
         if uuid:
-            logger.info("++++ uuid")
             queryset = URL.objects.filter(apiserver_url__icontains=micro_url).filter(active=True)
         else:
-            logger.info("++++ no uuid")
             queryset = URL.objects.filter(apiserver_url=micro_url).filter(active=True) 
 
         passes, response = _passes_basic_checks(request, queryset, micro_url)
@@ -179,8 +177,6 @@ def _passes_basic_checks(request, queryset, url):
 
     if queryset.count() == 0:
         return False, Response(status=status.HTTP_404_NOT_FOUND)
-
-    logger.info("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
 
     if request.content_type != "application/json":
         message = { 'message': 'Incorrect Content-Type header - JSON only allowed' }
