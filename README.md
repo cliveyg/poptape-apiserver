@@ -35,6 +35,7 @@ but could potentially be restricted or transformed by this apiserver too.
 
 ##### TODO:
 
+* Refactor URL matching regexs
 * Add throttling
 * Add Redis or similar store
 * Change DB to postgres or mysql

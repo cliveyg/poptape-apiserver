@@ -103,9 +103,8 @@ def BuildAPIResponse(**kwargs):
         if status_code == 200:
             return _builder(data, fields, request.path, uuid)
      
-    return Response({ 'message': 'unable to successfully build response',
-                      'errors': errors }, 
-                      status=status_code)
+    #return Response({ 'message': 'unable to successfully build response',
+    return Response({ 'errors': errors }, status=status_code)
 
 # -----------------------------------------------------------------------------
 # match returned results against the original api rules to know how to build

@@ -46,7 +46,7 @@ class ViewTestCase01(APITestCase):
 
         #url = reverse('details', args=[self.test_url.apiserver_url], kwargs=[url=self.test_url.apiserver_url])
         kwargs={'micro_url': self.apiserver_url}
-        url = reverse('user_details', kwargs=kwargs)
+        url = reverse('micro_details', kwargs=kwargs)
         header = {'HTTP-X-Forwarded-Proto': 'https'}
         response = self.client.get(url, 
                                    content_type='application/json', 
@@ -73,7 +73,7 @@ class ViewTestCase02(APITestCase):
 
         #url = reverse('details', args=["apiserver/login/noexisty"])
         kwargs={'micro_url': 'apiserver/nopelogin/noexisty'}
-        url = reverse('user_details', kwargs=kwargs)
+        url = reverse('micro_details', kwargs=kwargs)
         response = self.client.get(url, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -110,7 +110,7 @@ class ViewTestCase03(APITestCase):
 
         #url = reverse('details', args=["apiserver/login/status"])
 
-        url = reverse('user_details', kwargs={ 'micro_url': self.apiserver_url})
+        url = reverse('micro_details', kwargs={ 'micro_url': self.apiserver_url})
         response = self.client.get(url,
                                    headers={'X-Forwarded-Proto': 'https'},
                                    content_type='application/json',
@@ -214,7 +214,7 @@ class ViewTestCase05(APITestCase):
         self.client.credentials(HTTP_X_FORWARDED_PROTO='https')
         self.client.force_authenticate(user=self.user)
 
-        url = reverse('user_details', kwargs={ 'micro_url': self.apiserver_url})
+        url = reverse('micro_details', kwargs={ 'micro_url': self.apiserver_url})
         response = self.client.get(url,
                                    headers={'X-Forwarded-Proto': 'https'},
                                    content_type='application/json',

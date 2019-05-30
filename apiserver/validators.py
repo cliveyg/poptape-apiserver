@@ -42,8 +42,6 @@ def validate_url(value, url):
 
 def validate_http_codes(data):
 
-    logger.info(type(data))
-    logger.info("Data is [%s]", data)
     # this will error if the supplied data is not a list of integers
     # separated by a space
     try:
@@ -65,6 +63,12 @@ def validate_http_codes(data):
 def validate_api_rules(data):
 
     json_schema_validation(data, '/schemas/api_rules.json')
+
+# -----------------------------------------------------------------------------
+
+def validate_ip_addresses(data):
+
+    json_schema_validation(data, '/schemas/ip_addresses.json')
 
 # -----------------------------------------------------------------------------
 
