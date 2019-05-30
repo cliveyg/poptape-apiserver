@@ -66,11 +66,16 @@ class GetMicroserviceData(APIView):
 
 
     def get(self, request, *args, **kwargs):
-        #logger.info("in GetMicroserviceData.get")
 
         micro_url = kwargs.get('micro_url')
         uuid = kwargs.get('uuid')
-        queryset = URL.objects.filter(apiserver_url=micro_url).filter(active=True)
+
+        if uuid:
+            logger.info("++++ uuid")
+            queryset = URL.objects.filter(apiserver_url__icontains=micro_url).filter(active=True)
+        else:
+            logger.info("++++ no uuid")
+            queryset = URL.objects.filter(apiserver_url=micro_url).filter(active=True) 
 
         passes, response = _passes_basic_checks(request, queryset, micro_url)
 
@@ -80,11 +85,14 @@ class GetMicroserviceData(APIView):
         return BuildAPIResponse(request=request, qs=queryset, url=micro_url, uuid=uuid)
 
     def post(self, request, *args, **kwargs):
-        #logger.info("in GetMicroserviceData.post")
 
         micro_url = kwargs.get('micro_url')
         uuid = kwargs.get('uuid')
-        queryset = URL.objects.filter(apiserver_url=micro_url).filter(active=True)
+
+        if uuid:
+            queryset = URL.objects.filter(apiserver_url__icontains=micro_url).filter(active=True)
+        else:
+            queryset = URL.objects.filter(apiserver_url=micro_url).filter(active=True) 
 
         passes, response = _passes_basic_checks(request, queryset, micro_url)
 
@@ -171,6 +179,8 @@ def _passes_basic_checks(request, queryset, url):
 
     if queryset.count() == 0:
         return False, Response(status=status.HTTP_404_NOT_FOUND)
+
+    logger.info("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
 
     if request.content_type != "application/json":
         message = { 'message': 'Incorrect Content-Type header - JSON only allowed' }
