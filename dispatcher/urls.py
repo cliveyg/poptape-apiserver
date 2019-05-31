@@ -16,7 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.conf.urls import url, include
 from rest_framework.urlpatterns import format_suffix_patterns
-from dispatcher.views import Error404, CreateView, DetailsView, GetMicroURL, GetItemURL, GetMicroserviceData
+from dispatcher.views import CreateView, DetailsView, GetMicroserviceData
+from dispatcher.views import GetMicroURL, GetItemURL
 from reverse_proxy.views import ProxyView
 
 urlpatterns = [
@@ -30,7 +31,6 @@ urlpatterns = [
         url(r'^(?P<micro_url>.+)/?$', GetMicroserviceData.as_view(), name="micro_details"), 
         #url(r'^apiserver/item/(?P<micro_url>.+)$', GetItemURL.as_view(), name="item_details"),        
         #url(r'^apiserver/item/(?P<micro_url>.+)$', GetItemURL.as_view(), name="owt_else"),
-        url(r'^.*$',Error404.as_view(), name='error404')
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

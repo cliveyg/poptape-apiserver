@@ -67,37 +67,12 @@ class GetMicroserviceData(APIView):
 
     def get(self, request, *args, **kwargs):
 
-        micro_url = kwargs.get('micro_url')
-        uuid = kwargs.get('uuid')
+        return _call_response_builder(request, **kwargs)
 
-        if uuid:
-            queryset = URL.objects.filter(apiserver_url__icontains=micro_url).filter(active=True)
-        else:
-            queryset = URL.objects.filter(apiserver_url=micro_url).filter(active=True) 
-
-        passes, response = _passes_basic_checks(request, queryset, micro_url)
-
-        if not passes:
-            return response
-
-        return BuildAPIResponse(request=request, qs=queryset, url=micro_url, uuid=uuid)
 
     def post(self, request, *args, **kwargs):
-
-        micro_url = kwargs.get('micro_url')
-        uuid = kwargs.get('uuid')
-
-        if uuid:
-            queryset = URL.objects.filter(apiserver_url__icontains=micro_url).filter(active=True)
-        else:
-            queryset = URL.objects.filter(apiserver_url=micro_url).filter(active=True) 
-
-        passes, response = _passes_basic_checks(request, queryset, micro_url)
-
-        if not passes:
-            return response
-
-        return BuildAPIResponse(request=request, qs=queryset, url=micro_url, uuid=uuid)        
+        
+        return _call_response_builder(request, **kwargs)
 
     def put(self, request, *args, **kwargs):
         return JsonResponse({ 'message': 'put: nowt ere yet mate' }, status=418)
@@ -166,10 +141,22 @@ class GetItemURL(ListAPIView):
 
 # -----------------------------------------------------------------------------
 
-class Error404(APIView):
-    
-    def get(self, request):
-        return JsonResponse({ 'message': 'nowt ere mate' }, status=status.HTTP_404_NOT_FOUND)
+def _call_response_builder(request, **kwargs):
+
+        micro_url = kwargs.get('micro_url')
+        uuid = kwargs.get('uuid')
+
+        if uuid:
+            queryset = URL.objects.filter(apiserver_url__icontains=micro_url).filter(active=True)
+        else:
+            queryset = URL.objects.filter(apiserver_url=micro_url).filter(active=True) 
+
+        passes, response = _passes_basic_checks(request, queryset, micro_url)
+
+        if not passes:
+            return response
+
+        return BuildAPIResponse(request=request, qs=queryset, url=micro_url, uuid=uuid)
 
 # -----------------------------------------------------------------------------
 

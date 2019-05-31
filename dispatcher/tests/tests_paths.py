@@ -27,13 +27,14 @@ class ViewTestCase01(APITestCase):
         # define the test db record and any other test variables
         user = User.objects.create(username="clive")
         self.apiserver_url = "apiserver/login/status"
-        self.api_rules = "[{ \"url\": \"login/status\", \"fields\": [\"message\"]}]"
+        self.api_rules = "[{ \"url\": \"login/status\", \"fields\": [{\"message\": \"message\"}]}]"
         self.methods_list = ["GET", "POST"]
 
         self.test_url = URL(apiserver_url = self.apiserver_url,
                             api_rules = self.api_rules,
                             access_level = 10,
                             owner = user,
+                            ip_address_limiter = "",
                             active = True,
                             methods = self.methods_list)
         self.test_url.save()
@@ -42,7 +43,7 @@ class ViewTestCase01(APITestCase):
         
         # test the api can get a given url
         self.client = APIClient()
-        self.client.credentials(HTTP_X_FORWARDED_PROTO='https')
+        self.client.credentials(HTTP_X_FORWARDED_PROTO='https', HTTP_X_REAL_IP='101.23.45.67')
 
         #url = reverse('details', args=[self.test_url.apiserver_url], kwargs=[url=self.test_url.apiserver_url])
         kwargs={'micro_url': self.apiserver_url}
@@ -91,13 +92,14 @@ class ViewTestCase03(APITestCase):
         logging.disable(logging.CRITICAL)
         user = User.objects.create(username="clive")
         self.apiserver_url = "apiserver/login/status"
-        self.api_rules = "[{ \"url\": \"login/status\", \"fields\": [\"message\"]}]"        
+        self.api_rules = "[{ \"url\": \"login/status\", \"fields\": [{\"message\": \"message\"}]}]"
         self.methods_list = ["GET", "POST"]
 
         self.test_url = URL(apiserver_url = self.apiserver_url,
                             api_rules = self.api_rules,
                             access_level = 10,
                             owner = user,
+                            ip_address_limiter = "",
                             active = True,
                             methods = self.methods_list)
         self.test_url.save()
@@ -106,7 +108,7 @@ class ViewTestCase03(APITestCase):
 
         # test the api can get correct content for a given url
         self.client = APIClient()
-        self.client.credentials(HTTP_X_FORWARDED_PROTO='https')
+        self.client.credentials(HTTP_X_FORWARDED_PROTO='https', HTTP_X_REAL_IP='101.23.45.67')
 
         #url = reverse('details', args=["apiserver/login/status"])
 
@@ -196,13 +198,14 @@ class ViewTestCase05(APITestCase):
         logging.disable(logging.CRITICAL)
         self.user = User.objects.create(username="clive")
         self.apiserver_url = "apiserver/login/status"
-        self.api_rules = "[{ \"url\": \"login/status\", \"fields\": [\"message\"]}]"
+        self.api_rules = "[{ \"url\": \"login/status\", \"fields\": [{\"message\": \"message\"}]}]"
         self.methods_list = ["GET", "POST"]
 
         self.test_url = URL(apiserver_url = self.apiserver_url,
                             api_rules = self.api_rules,
                             access_level = 10,
                             owner = self.user,
+                            ip_address_limiter = "",
                             active = True,
                             methods = self.methods_list)
         self.test_url.save()
@@ -211,7 +214,7 @@ class ViewTestCase05(APITestCase):
 
         # test the api can get correct content for a given url
         self.client = APIClient()
-        self.client.credentials(HTTP_X_FORWARDED_PROTO='https')
+        self.client.credentials(HTTP_X_FORWARDED_PROTO='https', HTTP_X_REAL_IP='101.23.45.67')
         self.client.force_authenticate(user=self.user)
 
         url = reverse('micro_details', kwargs={ 'micro_url': self.apiserver_url})
@@ -225,8 +228,6 @@ class ViewTestCase05(APITestCase):
         self.assertEqual(content.get('request_url'), '/apiserver/login/status')
         # authenticated user returns extra fields such as access_level
         #self.assertEqual(content.get(''), 10)
-        print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
-        print(content)
 
 # -----------------------------------------------------------------------------
 # test the api returns 201 for created url

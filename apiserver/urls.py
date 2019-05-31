@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf.urls import url, include
-from .views import StatusView, AllStatusView
+from apiserver.views import StatusView, AllStatusView
 
 urlpatterns = [
     path('apiserver/admin/', admin.site.urls),
@@ -25,4 +25,5 @@ urlpatterns = [
     #path('apiserver/login/', include('login.urls')),
     url(r'^', include('dispatcher.urls')),
     #url(r'^api-auth/', include('rest_framework.urls'))
+    #url(r'^.*$',Error404.as_view(), name='error404')
 ]
