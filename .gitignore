@@ -28,6 +28,7 @@
 !.gitignore
 !apiserver/
 !apiserver/.env.example
+!apiserver/settings.py
 !apiserver/__init__.py
 !README.md
 !apiserver/urls.py

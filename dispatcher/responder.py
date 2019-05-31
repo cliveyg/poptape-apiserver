@@ -70,8 +70,10 @@ def BuildAPIResponse(**kwargs):
             full_url = settings.LOGIN_SERVER_URL
         elif microservice_name == 'items':
             full_url = settings.ITEMS_SERVER_URL
+        elif microservice_name == 'address':
+            full_url = settings.ADDRESS_SERVER_URL        
         else:
-            error = True
+            return Response({ 'message': 'Missing server URL' }, status=status.HTTP_501_NOT_IMPLEMENTED)
 
         #TODO: need to make this more general to accept more than one possible
         # variable
