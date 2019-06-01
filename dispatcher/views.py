@@ -11,7 +11,7 @@ from dispatcher.models import URL
 from dispatcher.serializers import URLSerializer
 from dispatcher.responder import BuildAPIResponse
 
-from django.conf import settings
+#from django.conf import settings
 import json
 
 # get an instance of a logger

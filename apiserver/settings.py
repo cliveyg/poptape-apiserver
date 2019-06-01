@@ -27,6 +27,7 @@ SECRET_KEY = os.getenv('SUPER_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+ENVIRONMENT = os.getenv('ENVIRONMENT')
 
 ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS')]
 
@@ -110,15 +111,11 @@ ADDRESS_URL = 'address/'
 
 # NOTE: if running in docker use set this to internal docker network name
 # to avoide trips out to the internet when calling the microservice
-#LOGIN_SERVER_URL = 'https://poptape.club/'
-APISERVER_SERVER = os.getenv('APISERVER_URL') #'https://poptape.club/'
-#LOGIN_SERVER_URL = 'http://login_api_1:8001/'
+APISERVER_SERVER = os.getenv('APISERVER_URL') 
 LOGIN_SERVER_URL = os.getenv('LOGIN_SERVER_URL')
 ITEMS_SERVER_URL = os.getenv('ITEMS_SERVER_URL')
 ADDRESS_SERVER_URL = os.getenv('ADDRESS_SERVER_URL')
 
-#TODO: Remember to remove this token
-TOKEN = os.getenv('TOKEN')
 
 TEMPLATES = [
     {

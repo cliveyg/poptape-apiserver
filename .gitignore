@@ -32,6 +32,7 @@
 !apiserver/__init__.py
 !README.md
 !apiserver/urls.py
+!apiserver/views.py
 !apiserver/validators.py
 !apiserver/wsgi.py
 !apiserver/tests/tests_paths.py

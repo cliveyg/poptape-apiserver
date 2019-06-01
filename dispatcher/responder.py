@@ -97,6 +97,8 @@ def BuildAPIResponse(**kwargs):
             fields.append(dic_of_fields)
             count += 1
 
+    logger.info("FULL URLS:")
+    logger.info(full_urls)
     errors = []
     if len(full_urls) > 0: 
         status_code, data, errors = fetch_data(request=request, 
@@ -104,9 +106,14 @@ def BuildAPIResponse(**kwargs):
                                                upstream_urls=full_urls) 
         if status_code == 200:
             return _builder(data, fields, request.path, uuid)
-     
-    #return Response({ 'message': 'unable to successfully build response',
-    return Response({ 'errors': errors }, status=status_code)
+    
+    if settings.ENVIRONMENT == "DEVELOPMENT": 
+        return Response({ 'errors': errors }, status=status_code)
+
+
+    return Response({ 'message': 'unable to successfully build response' }, 
+                    status=status_code)
+
 
 # -----------------------------------------------------------------------------
 # match returned results against the original api rules to know how to build
