@@ -25,8 +25,8 @@ schema validates against the model when a user attempts to enter rules in the
 Django administration panel.
 
 Also added via the Django admin are the incoming url and rules for allowed 
-verbs and whether an api path is currently active. Also as part of this 
-restrictions can be added as to valid ip addresses.
+verbs and whether an api path is currently active. IP address restrictions can
+also be imposed on the API routes.
 
 Request headers are passed back and forth between the client and microservice
 but could potentially be restricted or transformed by this apiserver too.
@@ -39,6 +39,7 @@ but could potentially be restricted or transformed by this apiserver too.
 * Add dev error reporting - error rep array
 * Add throttling
 * Add Redis or similar store
-* Change DB to postgres or mysql
+* Change DB to postgres
 * More tests
 * General bug fixes
+* Make pep8 compliant even though imo it's uglier and harder to read.

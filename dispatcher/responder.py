@@ -42,6 +42,8 @@ def BuildAPIResponse(**kwargs):
     if 'uuid' in kwargs:
         uuid = kwargs['uuid']
 
+    logger.debug("BuildAPIResponse")
+
     dicky = queryset.values('api_rules').get()
     url_list = json.loads(dicky.get('api_rules'))    
     dick2 = queryset.values('expected_successful_responses').get()
@@ -66,7 +68,7 @@ def BuildAPIResponse(**kwargs):
         
         #TODO: refactor this. don't like the hardcoded microservices here. 
         # maybe use an array that can be read from .env
-        if microservice_name == 'login':
+        if microservice_name == 'authy':
             full_url = settings.LOGIN_SERVER_URL
         elif microservice_name == 'items':
             full_url = settings.ITEMS_SERVER_URL

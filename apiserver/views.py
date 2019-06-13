@@ -48,9 +48,13 @@ class AllStatusView(RetrieveAPIView):
         url_list.append({'track_id': 3, 'url': address_status_url})        
 
         # call all microservices
-        status_code, results, errors = fetch_data(request=request,
-                                                  good_codes="200",
-                                                  upstream_urls=url_list)        
+        try:
+            status_code, results, errors = fetch_data(request=request,
+                                                      good_codes="200",
+                                                      upstream_urls=url_list)        
+        except Exception as e:
+            return Response({ 'message': 'bad juju man' }, 
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         # build our response
         constructed_results = []

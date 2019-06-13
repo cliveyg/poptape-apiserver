@@ -23,6 +23,8 @@ logger = logging.getLogger('apiserver')
 class CreateView(ListCreateAPIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
+    logger.info("In CreateView.get")
+
     # this class defines the create behavior of our rest api
     queryset = URL.objects.all()
     serializer_class = URLSerializer
@@ -42,6 +44,7 @@ class CreateView(ListCreateAPIView):
 
 class DetailsView(RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
+    logger.info("In DetailsView")
 
     # This class handles the http GET, PUT and DELETE requests.
     queryset = URL.objects.all()
@@ -66,12 +69,12 @@ class GetMicroserviceData(APIView):
 
 
     def get(self, request, *args, **kwargs):
-
+        logger.info("In GetMicroserviceData.get")
         return _call_response_builder(request, **kwargs)
 
 
     def post(self, request, *args, **kwargs):
-        
+        logger.info("In GetMicroserviceData.post") 
         return _call_response_builder(request, **kwargs)
 
     def put(self, request, *args, **kwargs):
@@ -117,6 +120,8 @@ class GetMicroURL(ListAPIView):
 
     def list(self, request, *args, **kwargs):
 
+
+
         queryset = self.filter_queryset(self.get_queryset())
         passes, response = _passes_basic_checks(request, queryset, self.micro_url)
 
@@ -146,6 +151,8 @@ def _call_response_builder(request, **kwargs):
         micro_url = kwargs.get('micro_url')
         uuid = kwargs.get('uuid')
 
+        logger.debug("MicroURL is [%s]",micro_url)
+
         if uuid:
             queryset = URL.objects.filter(apiserver_url__icontains=micro_url).filter(active=True)
         else:
@@ -155,6 +162,8 @@ def _call_response_builder(request, **kwargs):
 
         if not passes:
             return response
+
+        logger.debug("Passed basic checks")
 
         return BuildAPIResponse(request=request, qs=queryset, url=micro_url, uuid=uuid)
 
