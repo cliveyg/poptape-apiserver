@@ -39,7 +39,7 @@ but could potentially be restricted or transformed by this apiserver too.
 * Add dev error reporting - error rep array
 * Add throttling
 * Add Redis or similar store
-* Change DB to postgres
+* ~~Change DB to postgres~~
 * More tests
 * General bug fixes
 * Make pep8 compliant even though imo it's uglier and harder to read.
