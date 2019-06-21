@@ -34,6 +34,17 @@ apiserver too.
 
 ------
 
+##### Testing:
+
+Test coverage has been added. Command to create tests coverage report is
+`coverage run --source='.' --rcfile=apiserver/tests/.coveragerc  manage.py test`
+and the report can be read with `coverage -m`. Coverage has an issue with a
+symlinked directory in the omit section of the coverage config file. I have 
+temporarily hardcoded the full path in the config file. Needs to be fixed.
+
+
+------
+
 ##### TODO:
 
 * Refactor URL matching regexs

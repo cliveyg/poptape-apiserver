@@ -1,0 +1,13 @@
+# -----------------------------------------------------------------------------
+# configuration file for pytest coverage
+# -----------------------------------------------------------------------------
+
+[report]
+exclude_lines =
+    pragma: no cover
+    def __repr__
+
+[run]
+omit =
+    reverse_proxy/*
+    /home/clive/apiserver/django-revproxy/revproxy/*

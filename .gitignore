@@ -37,6 +37,7 @@
 !apiserver/wsgi.py
 !apiserver/tests/tests_paths.py
 !apiserver/tests/__init__.py
+!apiserver/tests/.coveragerc
 !requirements.txt
 !apiserver/schemas/
 !apiserver/schemas/*
