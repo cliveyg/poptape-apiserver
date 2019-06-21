@@ -74,7 +74,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': '/home/clive/apiserver/apiserver.log',
+            'filename': '/var/log/poptape_apiserver.log',
             'formatter': 'verbose',
         },
         'console': {
@@ -101,6 +101,7 @@ LOGGING = {
         },
     },
 }
+
 
 # url stuff
 

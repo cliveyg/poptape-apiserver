@@ -29,17 +29,20 @@ verbs and whether an api path is currently active. IP address restrictions can
 also be imposed on the API routes.
 
 Request headers are passed back and forth between the client and microservice
-but could potentially be restricted or transformed by this apiserver too.
+without alteration but could potentially be restricted or transformed by this
+apiserver too.
 
 ------
 
 ##### TODO:
 
 * Refactor URL matching regexs
-* Add dev error reporting - error rep array
+* ~~Add dev error reporting - error rep array~~
 * Add throttling
 * Add Redis or similar store
 * ~~Change DB to postgres~~
+* ~~Add coverage to tests~~
+* Mock calls to other microservices in tests
 * More tests
 * General bug fixes
 * Make pep8 compliant even though imo it's uglier and harder to read.

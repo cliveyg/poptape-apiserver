@@ -81,7 +81,7 @@ class ViewTestCase03(APITestCase):
 
 # -----------------------------------------------------------------------------
 # test the api returns list from /apiserver/status/all
-
+'''
 class ViewTestCase04(APITestCase):
 
     # test suite for the api views
@@ -101,3 +101,4 @@ class ViewTestCase04(APITestCase):
         response = self.client.get(url, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+'''
