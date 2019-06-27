@@ -10,6 +10,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from ..models import URL
 import logging
+import json
 
 # -----------------------------------------------------------------------------
 # view test cases
@@ -231,7 +232,7 @@ class ViewTestCase05(APITestCase):
 
 # -----------------------------------------------------------------------------
 # test the api returns 201 for created url
-'''
+
 class ViewTestCase06(APITestCase):
 
     # test suite for the api views
@@ -240,13 +241,13 @@ class ViewTestCase06(APITestCase):
         # define the test db record and any other test variables
         logging.disable(logging.CRITICAL)
         self.user = User.objects.create(username="clive")
-        self.api_rules = "[{ \"url\": \"url/number/1\", \"fields\": [{\"one\":\"one\"}]}]"
 
     def test_api_returns_201_for_post(self):
 
         # test the api can get correct content for a given url
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
+        self.api_rules = "[{ \"url\": \"url/number/1\", \"fields\": [{\"one\":\"one\"}]}]"
 
         url = reverse('create')
         self.url_data = {'apiserver_url': 'apiserver/login/testcreate',
@@ -254,12 +255,11 @@ class ViewTestCase06(APITestCase):
                          'access_level': 10,
                          'active': True,
                          'ip_address_limiter': '',
-                         'owner': 1,
+                         'owner': self.user.id,
                          'methods': ('GET')}
         response = self.client.post(url, self.url_data, format="json")
-
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-'''
+
 # -----------------------------------------------------------------------------
 # test the api won't allow a duplicate entry via post
 
@@ -296,7 +296,7 @@ class ViewTestCase07(APITestCase):
                          'access_level': 10,
                          'active': True,
                          'ip_address_limiter': '',
-                         'owner': 1,
+                         'owner': self.user.id,
                          'methods': ('GET')}        
         response = self.client.post(url, self.url_data, format="json")
 
@@ -328,5 +328,4 @@ class ViewTestCase08(APITestCase):
                          'owner': 1,
                          'methods': ('GET')}
         response = self.client.post(url, self.url_data, format="json")
-
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

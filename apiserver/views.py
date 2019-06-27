@@ -38,10 +38,10 @@ class AllStatusView(RetrieveAPIView):
 
         url_list = []
         
-        login_status_url = settings.LOGIN_SERVER_URL+ "login/status"
+        login_status_url = settings.LOGIN_SERVER_URL+ "authy/status"
         url_list.append({'track_id': 1, 'url': login_status_url})
 
-        items_status_url = settings.ITEMS_SERVER_URL+ "items/status"
+        items_status_url = settings.ITEMS_SERVER_URL+ "fotos/status"
         url_list.append({'track_id': 2, 'url': items_status_url})
 
         address_status_url = settings.ADDRESS_SERVER_URL+ "address/status"
@@ -63,8 +63,7 @@ class AllStatusView(RetrieveAPIView):
                 constructed_results.append({ 'url': result['upresp'].url,
                                              'code': result['upresp'].status_code,
                                              'message': message.get('message') })            
-
-
+    
         data = { 'request_url': request.path, 
                  'results': constructed_results }
 

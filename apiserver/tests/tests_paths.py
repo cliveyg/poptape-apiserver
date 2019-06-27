@@ -10,6 +10,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.conf import settings
 import logging
+import httpretty
 
 # -----------------------------------------------------------------------------
 # view test cases
@@ -81,17 +82,31 @@ class ViewTestCase03(APITestCase):
 
 # -----------------------------------------------------------------------------
 # test the api returns list from /apiserver/status/all
-'''
+
 class ViewTestCase04(APITestCase):
 
     # test suite for the api views
 
     def setUp(self):
         # define the test db record and any other test variables
-        logging.disable(logging.CRITICAL)
+        #logging.disable(logging.CRITICAL)
         self.user = User.objects.create(username="clive")
 
+    @httpretty.activate
     def test_api_returns_list_from_allstatus_if_authenticated(self):
+
+        httpretty.register_uri(
+            httpretty.GET,
+            "https://poptape.club/authy/status",
+            body = '{"message": "System running..."}')
+        httpretty.register_uri(
+            httpretty.GET,
+            "https://poptape.club/address/status",
+            body = '{"message": "System running..."}')
+        httpretty.register_uri(
+            httpretty.GET,
+            "https://poptape.club/fotos/status",
+            body = '{"message": "System running..."}')        
 
         # test the api can get correct content for a given url
         self.client = APIClient()
@@ -101,4 +116,4 @@ class ViewTestCase04(APITestCase):
         response = self.client.get(url, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-'''
+

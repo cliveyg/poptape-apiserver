@@ -23,8 +23,6 @@ logger = logging.getLogger('apiserver')
 class CreateView(ListCreateAPIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
-    logger.info("In CreateView.get")
-
     # this class defines the create behavior of our rest api
     queryset = URL.objects.all()
     serializer_class = URLSerializer
@@ -44,7 +42,6 @@ class CreateView(ListCreateAPIView):
 
 class DetailsView(RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
-    logger.info("In DetailsView")
 
     # This class handles the http GET, PUT and DELETE requests.
     queryset = URL.objects.all()
@@ -119,8 +116,6 @@ class GetMicroURL(ListAPIView):
     # override the list method so we can return whatever status codes we need
 
     def list(self, request, *args, **kwargs):
-
-
 
         queryset = self.filter_queryset(self.get_queryset())
         passes, response = _passes_basic_checks(request, queryset, self.micro_url)

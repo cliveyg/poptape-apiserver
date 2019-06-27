@@ -53,7 +53,8 @@ temporarily hardcoded the full path in the config file. Needs to be fixed.
 * Add Redis or similar store
 * ~~Change DB to postgres~~
 * ~~Add coverage to tests~~
-* Mock calls to other microservices in tests
+* ~~Mock calls to other microservices in tests~~
 * More tests
+* Move rev\_proxy stuff into it's own django app
 * General bug fixes
 * Make pep8 compliant even though imo it's uglier and harder to read.
