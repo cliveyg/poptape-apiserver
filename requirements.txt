@@ -13,7 +13,7 @@ django-filter==2.4.0
 django-multiselectfield==0.1.8
 django-nose==1.4.6
 djangorestframework==3.11.2
-gunicorn==19.9.0
+gunicorn==22.0.0
 httpretty==0.9.6
 idna==2.8
 jsonpointer==2.0
