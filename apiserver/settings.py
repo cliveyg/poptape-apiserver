@@ -150,7 +150,7 @@ DATABASES = {
         'USER': os.getenv('APISERVER_DB_USER'),
         'PASSWORD': os.getenv('APISERVER_DB_PASS'),
         'HOST': os.getenv('APISERVER_DB_HOST'),
-        'PORT': os.getenv('APISERVER_DB_PORT')
+        #'PORT': os.getenv('APISERVER_DB_PORT')
     }
 }
 
