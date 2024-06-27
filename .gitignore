@@ -26,6 +26,7 @@
 !dispatcher/migrations/
 !dispatcher/migrations/__init__.py
 !.gitignore
+!manage.py
 !apiserver/
 !apiserver/.env.example
 !apiserver/settings.py
