@@ -74,7 +74,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': '/var/log/poptape_apiserver.log',
+            'filename': 'poptape_apiserver.log',
             'formatter': 'verbose',
         },
         'console': {

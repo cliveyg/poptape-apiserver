@@ -9,6 +9,15 @@
 /dispatcher/migrations/__pycache__
 #/dispatcher/tests/__pycache__/*
 # Un-ignore these files - it's bit of a clonky way to do it but it's more secure
+!reverse_proxy/
+!reverse_proxy/__init__.py
+!reverse_proxy/connection.py
+!reverse_proxy/microservice.py
+!reverse_proxy/response.py
+!reverse_proxy/exceptions.py
+!reverse_proxy/transformer.py
+!reverse_proxy/utils.py
+!reverse_proxy/views.py
 !dispatcher/
 !dispatcher/__init__.py
 !dispatcher/admin.py
@@ -27,6 +36,9 @@
 !dispatcher/migrations/__init__.py
 !.gitignore
 !manage.py
+!Dockerfile
+!run_app.sh
+!docker-compose.yml
 !apiserver/
 !apiserver/.env.example
 !apiserver/settings.py
