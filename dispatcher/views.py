@@ -65,9 +65,9 @@ class GetMicroserviceData(APIView):
     #    #logger.info("In GetMicroserviceData.initial")
 
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, ms_uuid, **kwargs):
         logger.info("In GetMicroserviceData.get")
-        return _call_response_builder(request, **kwargs)
+        return _call_response_builder(request, ms_uuid, **kwargs)
 
 
     def post(self, request, *args, **kwargs):
@@ -141,10 +141,10 @@ class GetItemURL(ListAPIView):
 
 # -----------------------------------------------------------------------------
 
-def _call_response_builder(request, **kwargs):
+def _call_response_builder(request, ms_uuid, **kwargs):
 
         micro_url = kwargs.get('micro_url')
-        uuid = kwargs.get('uuid')
+        uuid = ms_uuid
 
         logger.debug("MicroURL is [%s]",micro_url)
 
