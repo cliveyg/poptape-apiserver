@@ -1,0 +1,43 @@
+services:
+  api:
+    env_file:
+      - "apiserver/.env"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: poptape/apiserver/api:v0.1
+    #TODO: change ports to expose when going into prod and using an apiserver to manage incoming
+    ports:
+      - "1260:9500"
+    restart: always
+    volumes:
+      - /var/log:${LOGFILE}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10Mb"
+        max-file: "5"
+    networks:
+      - poptape
+  db:
+    image: postgres:alpine
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=${APISERVER_DB_PASS}
+      - POSTGRES_USER=${APISERVER_DB_USER}
+      - POSTGRES_DB=${APISERVER_DB_NAME}
+    ports:
+      - "1261:5432"
+    expose:
+      - "5432"
+    volumes:
+      - poptape_apiserver_data:/var/lib/postgresql/data
+    networks:
+      - poptape
+networks:
+  poptape:
+    external: true
+volumes:
+  poptape_apiserver_data:
+    name: poptape_apiserver_data
+
