@@ -5,7 +5,8 @@
 
 from rest_framework import status
 from rest_framework.response import Response
-from django.utils.six.moves.urllib.parse import urlparse, urlencode, quote_plus
+# from django.utils.six.moves.urllib.parse import urlparse, urlencode, quote_plus
+from urllib.parse import urlparse, urlencode, quote_plus
 from django.conf import settings
 #from django.views.decorators.csrf import csrf_exempt
 
@@ -82,6 +83,7 @@ async def _dispatch(request, url_dict):
         upstream_url += '?' + get_encoded_query_params()
 
     request_headers = get_request_headers(request)
+    upstream_response = Response()
 
     try:
         if request.method == "GET":

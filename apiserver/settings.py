@@ -74,7 +74,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': 'poptape_apiserver.log',
+            'filename': 'log/poptape_apiserver.log',
             'formatter': 'verbose',
         },
         'console': {
@@ -91,10 +91,20 @@ LOGGING = {
         },
         'django.request': {
             'handlers': ['file'],
-            'level': 'INFO',
+            'level': 'DEBUG',
             'propagate': True,
         },
         'apiserver': {
+            'handlers': ['file', 'console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'dispatcher': {
+            'handlers': ['file', 'console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'reverse_proxy': {
             'handlers': ['file', 'console'],
             'level': 'DEBUG',
             'propagate': True,

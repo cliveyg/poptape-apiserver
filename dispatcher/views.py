@@ -65,7 +65,7 @@ class GetMicroserviceData(APIView):
     #    #logger.info("In GetMicroserviceData.initial")
 
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, **kwargs):
         logger.info("In GetMicroserviceData.get")
         return _call_response_builder(request, **kwargs)
 
@@ -144,7 +144,7 @@ class GetItemURL(ListAPIView):
 def _call_response_builder(request, **kwargs):
 
         micro_url = kwargs.get('micro_url')
-        uuid = kwargs.get('uuid')
+        uuid = kwargs.get('ms_uuid')
 
         logger.debug("MicroURL is [%s]",micro_url)
 
@@ -191,13 +191,18 @@ def _passes_basic_checks(request, queryset, url):
         message = { 'message': 'Dunno where you live so you\'re not coming in' }
         return False, Response(message, status=status.HTTP_400_BAD_REQUEST)
     else:
-        # if exists check against our list if we have one
+        # if exists check against our ip limiting if it's switched on for this url
         ip_restrictions = queryset.values('ip_address_limiter').get()
-        if ip_restrictions.get('ip_address_limiter') != "":
-            good_ips = json.loads(ip_restrictions.get('ip_address_limiter')) 
-            if not request.META.get('HTTP_X_REAL_IP') in good_ips:
-                message = { 'message': 'You\'re from a dodgy part of town' }
+        limit_ip = queryset.values('limit_ip').get()
+        if limit_ip.get('limit_ip'):
+            message = { 'message': 'You\'re from a dodgy part of town' }
+            if ip_restrictions.get('ip_address_limiter') != "":
+                good_ips = json.loads(ip_restrictions.get('ip_address_limiter'))
+                if not request.META.get('HTTP_X_REAL_IP') in good_ips:
+                    logger.debug("HTTP_X_REAL_IP is [%s]", request.META.get('HTTP_X_REAL_IP'))
+                    return False, Response(message, status=status.HTTP_403_FORBIDDEN)
+            else:
                 return False, Response(message, status=status.HTTP_403_FORBIDDEN)
-    
+
     return True, None
 

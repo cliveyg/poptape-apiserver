@@ -45,7 +45,11 @@ def BuildAPIResponse(**kwargs):
     logger.debug("BuildAPIResponse")
 
     dicky = queryset.values('api_rules').get()
-    url_list = json.loads(dicky.get('api_rules'))    
+    api_rules = dicky.get('api_rules')
+    api_rules.replace('\\n', ' ').replace('\\t', ' ').replace('\\r', ' ')
+    api_rules.replace('\n', ' ').replace('\t', ' ').replace('\r', ' ')
+    logger.debug(api_rules)
+    url_list = json.loads(api_rules)
     dick2 = queryset.values('expected_successful_responses').get()
     good_codes = dick2.get('expected_successful_responses')
 
