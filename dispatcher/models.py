@@ -30,7 +30,8 @@ class URL(models.Model):
                                                      validators=[validate_http_codes])
     owner = models.ForeignKey('auth.User',
                               related_name='URL',
-                              on_delete=models.PROTECT) 
+                              on_delete=models.PROTECT)
+    limit_ip = models.BooleanField(default=True)
     ip_address_limiter = models.TextField(blank=True, null=True, 
                                           validators=[validate_ip_addresses])
     created = models.DateTimeField(auto_now_add=True)

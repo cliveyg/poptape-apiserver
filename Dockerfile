@@ -1,4 +1,4 @@
-FROM python:3.10-alpine
+FROM python:3.12-alpine
 
 # add bash etc as alpine version doesn't have these
 #RUN apk add --no-cache bash git gawk sed grep bc coreutils
@@ -33,6 +33,8 @@ RUN rm -rf vapi
 RUN rm -f docker-compose.yml
 RUN rm -f .DS_Store
 RUN rm -rf .idea
+RUN rm -f poptape_apiserver.log
+RUN rm -f apiserver.log
 RUN mkdir -p /apiserver/log
 
 # Install any needed packages specified in requirements.txt

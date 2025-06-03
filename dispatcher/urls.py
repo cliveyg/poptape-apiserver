@@ -12,7 +12,7 @@ from dispatcher.views import CreateView, GetMicroserviceData
 urlpatterns = [
         # TODO: improve the url matching
         path('apiserver/dispatcher/auth/', include('rest_framework.urls', namespace='rest_framework')),
-        path('apiserver/dispatcher/urls/$', CreateView.as_view(), name="create"),
+        re_path(r'^apiserver/dispatcher/urls/$', CreateView.as_view(), name="create"),
         # url(r'^apiserver/micro/(?P<micro_url>.+)/?$', GetMicroserviceData.as_view(), name="microservice"),
         # url(r'^(?P<micro_url>.+)/(?P<uuid>[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})$', GetMicroURL.as_view(), name="micro_details"),
         # url(r'^(?P<micro_url>.+)/?$', GetMicroURL.as_view(), name="micro_details"),
