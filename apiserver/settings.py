@@ -26,10 +26,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.getenv('SUPER_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG')
 ENVIRONMENT = os.getenv('ENVIRONMENT')
 
-ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS')]
+#ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS')]
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'poptape.local']
 
 # Application definition
 
@@ -44,11 +45,13 @@ INSTALLED_APPS = [
     'django_extensions',
     'reverse_proxy',
     'dispatcher',
+    'apiserver',
 ]
 
 MIDDLEWARE = [
     #'apiserver.middleware.DisableCSRF',  # custom middleware for disabling CSRF
     #'apiserver.csrfexemption.CsrfExemptSessionAuthentication',
+    #'apiserver.authentication.DisableCSRFMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -86,7 +89,7 @@ LOGGING = {
     'loggers': {
         'django': {
             'handlers': ['file'],
-            'level': 'ERROR',
+            'level': 'INFO',
             'propagate': True,
         },
         'django.request': {
@@ -126,6 +129,7 @@ APISERVER_SERVER = os.getenv('APISERVER_URL')
 LOGIN_SERVER_URL = os.getenv('LOGIN_SERVER_URL')
 ITEMS_SERVER_URL = os.getenv('ITEMS_SERVER_URL')
 ADDRESS_SERVER_URL = os.getenv('ADDRESS_SERVER_URL')
+AWS_SERVER_URL = os.getenv('AWS_SERVER_URL')
 
 
 TEMPLATES = [
@@ -183,16 +187,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-#ACCOUNT_LOGOUT_ON_GET = True
-#REST_FRAMEWORK = {
-#    'DEFAULT_AUTHENTICATION_CLASSES': (
-#        'rest_framework.authentication.TokenAuthentication',
-#    ),
-#   'DEFAULT_PERMISSION_CLASSES': (
-#        'rest_framework.permissions.AllowAny',
-#    ),
-#}
-
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
@@ -213,6 +207,9 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.JSONParser',
     )
 }
+
+#CSRF_COOKIE_SECURE = False
+#CSRF_COOKIE_HTTPONLY = False
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/

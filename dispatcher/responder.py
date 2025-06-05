@@ -12,6 +12,7 @@ import operator
 import time
 import json
 import re
+import os
 import requests
 from requests.auth import HTTPBasicAuth
 
@@ -38,9 +39,9 @@ def BuildAPIResponse(**kwargs):
     request = kwargs['request']
     queryset = kwargs['qs']
     url = kwargs['url']
-    uuid = None
-    if 'uuid' in kwargs:
-        uuid = kwargs['uuid']
+    uuid1 = None
+    if 'uuid1' in kwargs:
+        uuid1 = kwargs['uuid1']
 
     logger.debug("BuildAPIResponse")
 
@@ -54,7 +55,7 @@ def BuildAPIResponse(**kwargs):
     good_codes = dick2.get('expected_successful_responses')
 
     # we need to get the full url for each url. the reason we're doing
-    # it this way is so we can get server names from the .env file
+    # it this way is so we can get server names from the .env file
     full_urls = []
     fields =[]
     count = 1
@@ -77,14 +78,17 @@ def BuildAPIResponse(**kwargs):
         elif microservice_name == 'items':
             full_url = settings.ITEMS_SERVER_URL
         elif microservice_name == 'address':
-            full_url = settings.ADDRESS_SERVER_URL        
+            full_url = settings.ADDRESS_SERVER_URL
+        elif microservice_name == 'aws':
+            full_url = settings.AWS_SERVER_URL
         else:
             return Response({ 'message': 'Missing server URL' }, status=status.HTTP_501_NOT_IMPLEMENTED)
 
         #TODO: need to make this more general to accept more than one possible
         # variable
-        if uuid:
-            new_rest_of_url = re.sub('<public_id>', uuid, rest_of_url)
+
+        if uuid1 is not None and destination['pass_data']:
+            new_rest_of_url = re.sub('<uuid1>', str(uuid1), rest_of_url)
             full_url = full_url + microservice_name + "/" + new_rest_of_url
         elif rest_of_url != None:
             full_url = full_url + microservice_name + "/" + rest_of_url
@@ -103,17 +107,18 @@ def BuildAPIResponse(**kwargs):
             fields.append(dic_of_fields)
             count += 1
 
-    logger.info("FULL URLS:")
+    logger.info("FULL OUTGOING URLS:")
     logger.info(full_urls)
+
     errors = []
     if len(full_urls) > 0: 
         status_code, data, errors = fetch_data(request=request, 
                                                good_codes=good_codes,
                                                upstream_urls=full_urls) 
         if status_code == 200:
-            return _builder(data, fields, request.path, uuid)
+            return _builder(data, fields, request.path, request.method, uuid1)
     
-    if settings.ENVIRONMENT == "DEVELOPMENT": 
+    if settings.ENVIRONMENT == "DEV":
         return Response({ 'errors': errors }, status=status_code)
 
 
@@ -126,17 +131,16 @@ def BuildAPIResponse(**kwargs):
 # the response with only desired fields. may also need to transform the names
 # of the returned fields to something else
 
-def _builder(results, fields, request_path, uuid):
+def _builder(results, fields, request_path, request_method, uuid):
 
     # the data should be in the form of an array of dicts. the dicts consists 
-    # of a requests response and the original incoming request
+    # of a requests response and the original incoming request
     response_fields = []
 
     # we now create one big dictionary with all our returned data. that data
     # can be identified by the track_id and matched to what we want our 
     # output to be
     for result in results:
-        #logger.debug(result)
         requests_response = result['upresp']
         json_content = None
         try:
@@ -148,9 +152,9 @@ def _builder(results, fields, request_path, uuid):
         json_content['track_id'] = result['track_id']
         response_fields.append(json_content)
 
-    # this sorting/matching of data has only been tested on relatively
+    # this sorting/matching of data has only been tested on relatively
     # flat data structures. we may need some kind of recursion or something
-    # else for more complicated bit's of data. refactor in the future
+    # else for more complicated bit's of data. refactor in the future
 
     # we are matching/sorting on our track_id 
     sorting_key = operator.itemgetter("track_id")
@@ -170,17 +174,21 @@ def _builder(results, fields, request_path, uuid):
                 # the name of the field to what we wanted from the api rules
                 # database field
                 out_dic[wanted_field.get(key)] = big_dict.get(key)
-        
-    out_dic['request_url'] = request_path
+
+    if settings.ENVIRONMENT == "DEV":
+        out_dic['request_url'] = request_path
 
     if uuid:
         out_dic['public_id'] = uuid
 
-    return Response(out_dic, status=status.HTTP_200_OK)
+    stts = status.HTTP_200_OK
+    if request_method == 'POST':
+        stts = status.HTTP_201_CREATED
+    return Response(out_dic, status=stts)
 
 # -----------------------------------------------------------------------------
 # need to remove any hop-by-hop headers and django says no to these and kicks
-# up a fuss
+# up a fuss
 
 def _build_headers(headers):
 

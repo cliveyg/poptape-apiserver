@@ -34,6 +34,7 @@
 !dispatcher/views.py
 !dispatcher/migrations/
 !dispatcher/migrations/__init__.py
+!dispatcher/migrations/*
 !.gitignore
 !manage.py
 !Dockerfile
