@@ -1,4 +1,6 @@
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated, AllowAny
+
+import apiserver.settings
 #from apiserver.csrfexemption import CsrfExemptSessionAuthentication
 from apiserver.authentication import CsrfExemptSessionAuthentication
 from django.views.decorators.csrf import csrf_exempt
@@ -145,7 +147,7 @@ class GetItemURL(ListAPIView):
 
 def _call_response_builder(request, **kwargs):
 
-        micro_url = "apiserver/" + kwargs.get('micro_url')
+        micro_url = apiserver.settings.APISERVER_URL + kwargs.get('micro_url')
         uuid1 = kwargs.get('uuid1')
 
         logger.debug("MicroURL is [%s]",micro_url)
@@ -171,7 +173,9 @@ def _call_response_builder(request, **kwargs):
 def _passes_basic_checks(request, queryset, url):
 
     if queryset.count() == 0:
-        return False, Response(status=status.HTTP_404_NOT_FOUND)
+        #return False, Response(status=status.HTTP_404_NOT_FOUND)
+        message = { 'message': 'Nowt found', 'request_url': request.path }
+        return False, Response(message, status=status.HTTP_404_NOT_FOUND)
 
     if request.content_type != "application/json":
         message = { 'message': 'Incorrect Content-Type header - JSON only allowed' }

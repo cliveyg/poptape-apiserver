@@ -121,9 +121,10 @@ def BuildAPIResponse(**kwargs):
     if settings.ENVIRONMENT == "DEV":
         return Response({ 'errors': errors }, status=status_code)
 
-
-    return Response({ 'message': 'unable to successfully build response' }, 
-                    status=status_code)
+    for e in errors:
+        # remove url from errors to avoid data leakage
+        e.pop('url', None)
+    return Response({ 'errors': errors }, status=status_code)
 
 
 # -----------------------------------------------------------------------------

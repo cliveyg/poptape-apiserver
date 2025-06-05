@@ -5,6 +5,6 @@ from . models import URL
 admin.site.register(URL)
 
 class FlatPageAdmin(admin.ModelAdmin):
-    fields = ('apiserver_url', 'api_rules', 'access_level', 'methods',
+    fields = ('apiserver_url', 'description', 'api_rules', 'access_level', 'methods',
               'limit_ip', 'ip_address_limiter', 'active', 'created', 'modified')
 
