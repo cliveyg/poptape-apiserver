@@ -26,11 +26,14 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.getenv('SUPER_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG')
-ENVIRONMENT = os.getenv('ENVIRONMENT')
+DEBUG = os.getenv('DEBUG', False)
+ENVIRONMENT = os.getenv('ENVIRONMENT', 'PROD')
 
-#ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS')]
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'poptape.local']
+# split on , if any and build array of allowed hosts
+allhosts = os.getenv('ALLOWED_HOSTS', 'localhost')
+localhosts = allhosts.split(",")
+ALLOWED_HOSTS = localhosts
+#ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'poptape.local']
 
 # Application definition
 
@@ -119,9 +122,10 @@ LOGGING = {
 # url stuff
 
 ROOT_URLCONF = 'apiserver.urls'
-APISERVER_URL = 'apiserver/'
+APISERVER_URL = 'api/'
 LOGIN_URL = 'login/'
 ADDRESS_URL = 'address/'
+AWS_URL = 'aws/'
 
 # NOTE: if running in docker use set this to internal docker network name
 # to avoide trips out to the internet when calling the microservice
@@ -229,5 +233,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
-STATIC_URL = '/apiserver/static/'
+STATIC_URL = '/api/static/'
 

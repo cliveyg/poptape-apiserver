@@ -27,14 +27,17 @@ class ViewTestCase01(APITestCase):
         logging.disable(logging.CRITICAL)
         # define the test db record and any other test variables
         user = User.objects.create(username="clive")
-        self.apiserver_url = "apiserver/login/status"
-        self.api_rules = "[{ \"url\": \"authy/status\", \"fields\": [{\"message\": \"message\"}]}]"
-        self.methods_list = ["GET", "POST"]
+        self.apiserver_url = "api/login/status"
+        self.description = "blah blah"
+        self.api_rules = "[{ \"url\": \"authy/status\", \"pass_data\": false, \"fields\": [{\"message\": \"message\"}]}]"
+        self.methods_list = ["GET"]
 
         self.test_url = URL(apiserver_url = self.apiserver_url,
                             api_rules = self.api_rules,
+                            description = self.description,
                             access_level = 10,
                             owner = user,
+                            limit_ip = False,
                             ip_address_limiter = "",
                             active = True,
                             methods = self.methods_list)
@@ -92,14 +95,16 @@ class ViewTestCase03(APITestCase):
         # define the test db record and any other test variables
         logging.disable(logging.CRITICAL)
         user = User.objects.create(username="clive")
-        self.apiserver_url = "apiserver/login/status"
-        self.api_rules = "[{ \"url\": \"authy/status\", \"fields\": [{\"message\": \"message\"}]}]"
-        self.methods_list = ["GET", "POST"]
+        self.apiserver_url = "api/login/status"
+        self.description = "blah blah"
+        self.api_rules = "[{ \"url\": \"authy/status\", \"pass_data\": false, \"fields\": [{\"message\": \"message\"}]}]"
+        self.methods_list = ["GET"]
 
         self.test_url = URL(apiserver_url = self.apiserver_url,
                             api_rules = self.api_rules,
                             access_level = 10,
                             owner = user,
+                            limit_ip = False,
                             ip_address_limiter = "",
                             active = True,
                             methods = self.methods_list)
@@ -137,7 +142,7 @@ class ViewTestCase04(APITestCase):
         # define the test db record and any other test variables
         logging.disable(logging.CRITICAL)
         user = User.objects.create(username="clive")
-        self.apiserver_url = "apiserver/login/url1"
+        self.apiserver_url = "api/login/url1"
         self.api_rules = "[{ \"url\": \"url/number/1\", \"fields\": [\"one\"]}]"
         self.methods_list = ["GET", "POST"]
 
@@ -150,7 +155,7 @@ class ViewTestCase04(APITestCase):
         self.test_url1.save()
 
         logging.disable(logging.CRITICAL)
-        self.apiserver_url = "apiserver/login/url2"
+        self.apiserver_url = "api/login/url2"
         self.api_rules = "[{ \"url\": \"url/number/2\", \"fields\": [\"one\"]}]"
         self.methods_list = ["GET"]
 
@@ -163,7 +168,7 @@ class ViewTestCase04(APITestCase):
         self.test_url2.save()
 
         logging.disable(logging.CRITICAL)
-        self.apiserver_url = "apiserver/login/url3"
+        self.apiserver_url = "api/login/url3"
         self.api_rules = "[{ \"url\": \"url/number/3\", \"fields\": [\"one\"]}]"
         self.methods_list = ["GET", "DELETE"]
 
@@ -198,7 +203,7 @@ class ViewTestCase05(APITestCase):
         # define the test db record and any other test variables
         logging.disable(logging.CRITICAL)
         self.user = User.objects.create(username="clive")
-        self.apiserver_url = "apiserver/login/status"
+        self.apiserver_url = "api/login/status"
         self.api_rules = "[{ \"url\": \"authy/status\", \"fields\": [{\"message\": \"message\"}]}]"
         self.methods_list = ["GET", "POST"]
 
@@ -250,7 +255,7 @@ class ViewTestCase06(APITestCase):
         self.api_rules = "[{ \"url\": \"url/number/1\", \"fields\": [{\"one\":\"one\"}]}]"
 
         url = reverse('create')
-        self.url_data = {'apiserver_url': 'apiserver/login/testcreate',
+        self.url_data = {'apiserver_url': 'api/login/testcreate',
                          'api_rules': self.api_rules,
                          'access_level': 10,
                          'active': True,
@@ -271,7 +276,7 @@ class ViewTestCase07(APITestCase):
         # define the test db record and any other test variables
         logging.disable(logging.CRITICAL)
         self.user = User.objects.create(username="clive")
-        self.apiserver_url = "apiserver/login/status"
+        self.apiserver_url = "api/login/status"
         self.api_rules = "[{ \"url\": \"url/number/1\", \"fields\": [{\"one\":\"one\"}]}]"
         self.methods_list = ["GET", "POST"]
 
@@ -291,7 +296,7 @@ class ViewTestCase07(APITestCase):
         self.api_rules = "[{ \"url\": \"url/number/1\", \"fields\": [{\"one\":\"one\"}]}]"
 
         url = reverse('create')
-        self.url_data = {'apiserver_url': 'apiserver/login/status',
+        self.url_data = {'apiserver_url': 'api/login/status',
                          'api_rules': self.api_rules,
                          'access_level': 10,
                          'active': True,
@@ -320,7 +325,7 @@ class ViewTestCase08(APITestCase):
         self.client = APIClient()
 
         url = reverse('create')
-        self.url_data = {'apiserver_url': 'apiserver/login/status',
+        self.url_data = {'apiserver_url': 'api/login/status',
                          'api_rules': self.api_rules,
                          'access_level': 10,
                          'active': True,

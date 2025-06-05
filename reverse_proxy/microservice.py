@@ -57,11 +57,15 @@ def fetch_data(**kwargs):
                 # bad code would be returned. revisit this
                 if result['upresp'].status_code > ret_code:
                     ret_code = result['upresp'].status_code
+                    try:
+                        err_data = result['upresp'].json()
+                    except Exception as e:
+                        logger.error(e)
+                        err_data = json.loads('{ "message": "No error data returned" }')
+
                     errors.append({ 'url': result['upresp'].url,
                                     'code': result['upresp'].status_code,
-                                    'data': result['upresp'].json() })
-                #if result['upresp'].json() not in errors:
-                #    errors.append(result['upresp'].json())
+                                    'data': err_data })
                 
         return ret_code, results, errors
     return 503, None
