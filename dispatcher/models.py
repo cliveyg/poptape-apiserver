@@ -4,6 +4,7 @@ from apiserver.validators import validate_apiserver_url, validate_api_rules
 from apiserver.validators import validate_http_codes, validate_ip_addresses
 
 class HTTPMethod(models.Model):
+    id = models.AutoField(primary_key=True)
     GET = 'GET'
     PUT = 'PUT'
     DELETE = 'DELETE'
@@ -18,10 +19,15 @@ class HTTPMethod(models.Model):
 # Create your models here.
 
 class URL(models.Model):
-    apiserver_url = models.CharField(max_length=400, blank=False, 
-                                     unique=True, validators=[validate_apiserver_url])
-    api_rules = models.TextField(blank=False, null=False, 
-                                 unique=True, validators=[validate_api_rules])
+    class Meta:
+        managed = True
+
+    id = models.AutoField(primary_key=True)
+    apiserver_url = models.CharField(max_length=400, blank=False,
+                                     validators=[validate_apiserver_url])
+    description = models.TextField(null=True, default='')
+    api_rules = models.TextField(blank=False, null=False,
+                                 validators=[validate_api_rules])
     access_level = models.IntegerField(default=99)
     active = models.BooleanField(default=True)
     methods = MultiSelectField(choices=HTTPMethod.METHOD_CHOICES, 

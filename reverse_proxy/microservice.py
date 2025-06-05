@@ -50,7 +50,7 @@ def fetch_data(**kwargs):
     errors = []
 
     if len(results) > 0:
-        ret_code = 200 # default ret code
+        ret_code = 200 # default ret code
         for result in results:
             if result['upresp'].status_code not in good_codes:
                 # we overwrite codes here - so only the last 

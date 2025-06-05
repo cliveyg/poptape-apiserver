@@ -1,6 +1,7 @@
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated, AllowAny
 #from apiserver.csrfexemption import CsrfExemptSessionAuthentication
 from apiserver.authentication import CsrfExemptSessionAuthentication
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
 from rest_framework.response import Response
 from django.http import JsonResponse
@@ -54,11 +55,13 @@ class DetailsView(RetrieveUpdateDestroyAPIView):
 
 # -----------------------------------------------------------------------------
 
+#@csrf_exempt
 class GetMicroserviceData(APIView):
-    permission_classes = (IsAuthenticatedOrReadOnly,)
-    authentication_classes = (CsrfExemptSessionAuthentication, )
-    #permission_classes = (AllowAny, )
+    #permission_classes = (IsAuthenticatedOrReadOnly,)
+    #authentication_classes = (CsrfExemptSessionAuthentication, )
+    permission_classes = (AllowAny, )
     #authentication_classes = (CsrfExemptSessionAuthentication,)
+    authentication_classes = ()
 
     # retrieves a model based on the inbound url
     #def initial(self, request, *args, **kwargs):
@@ -69,9 +72,8 @@ class GetMicroserviceData(APIView):
         logger.info("In GetMicroserviceData.get")
         return _call_response_builder(request, **kwargs)
 
-
     def post(self, request, *args, **kwargs):
-        logger.info("In GetMicroserviceData.post") 
+        logger.info("In GetMicroserviceData.post")
         return _call_response_builder(request, **kwargs)
 
     def put(self, request, *args, **kwargs):
@@ -104,7 +106,7 @@ class GetMicroURL(ListAPIView):
             self.uuid = None
 
         # only return the object if it's active and should only return exact match if there is not a uuid
-        # in url
+        # in url
         if self.uuid:
             url_model = URL.objects.filter(apiserver_url__icontains=self.micro_url).filter(active=True)
         else:
@@ -143,13 +145,16 @@ class GetItemURL(ListAPIView):
 
 def _call_response_builder(request, **kwargs):
 
-        micro_url = kwargs.get('micro_url')
-        uuid = kwargs.get('ms_uuid')
+        micro_url = "apiserver/" + kwargs.get('micro_url')
+        uuid1 = kwargs.get('uuid1')
 
         logger.debug("MicroURL is [%s]",micro_url)
+        logger.debug("UUID1 is [%s]",uuid1)
 
-        if uuid:
-            queryset = URL.objects.filter(apiserver_url__icontains=micro_url).filter(active=True)
+        if uuid1:
+            qs = micro_url + '/<uuid1>'
+            queryset = URL.objects.filter(apiserver_url=qs).filter(active=True)
+            #queryset = URL.objects.filter(apiserver_url__icontains=micro_url).filter(active=True)
         else:
             queryset = URL.objects.filter(apiserver_url=micro_url).filter(active=True) 
 
@@ -159,8 +164,7 @@ def _call_response_builder(request, **kwargs):
             return response
 
         logger.debug("Passed basic checks")
-
-        return BuildAPIResponse(request=request, qs=queryset, url=micro_url, uuid=uuid)
+        return BuildAPIResponse(request=request, qs=queryset, url=micro_url, uuid1=uuid1)
 
 # -----------------------------------------------------------------------------
 
