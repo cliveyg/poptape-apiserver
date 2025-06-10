@@ -84,7 +84,9 @@ async def _dispatch(request, url_dict):
     #request_payload = request.body
 
     if request.GET:
-        upstream_url += '?' + get_encoded_query_params()
+        upstream_url += '?' + get_encoded_query_params(request)
+
+    logger.debug("Upstream URL is [%s]", upstream_url)
 
     request_headers = get_request_headers(request)
     upstream_response = Response()
