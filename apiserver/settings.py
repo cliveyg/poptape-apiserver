@@ -126,14 +126,16 @@ APISERVER_URL = 'api/'
 LOGIN_URL = 'login/'
 ADDRESS_URL = 'address/'
 AWS_URL = 'aws/'
+FOTOS_URL = 'fotos/'
 
 # NOTE: if running in docker use set this to internal docker network name
-# to avoide trips out to the internet when calling the microservice
+# to avoid trips out to the internet when calling the microservice
 APISERVER_SERVER = os.getenv('APISERVER_URL') 
 LOGIN_SERVER_URL = os.getenv('LOGIN_SERVER_URL')
 ITEMS_SERVER_URL = os.getenv('ITEMS_SERVER_URL')
 ADDRESS_SERVER_URL = os.getenv('ADDRESS_SERVER_URL')
 AWS_SERVER_URL = os.getenv('AWS_SERVER_URL')
+FOTOS_SERVER_URL = os.getenv('FOTOS_SERVER_URL')
 
 
 TEMPLATES = [

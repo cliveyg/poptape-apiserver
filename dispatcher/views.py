@@ -12,7 +12,7 @@ from rest_framework.views import APIView
 
 from dispatcher.models import URL
 from dispatcher.serializers import URLSerializer
-from dispatcher.responder import BuildAPIResponse
+from dispatcher.responder import build_api_response
 
 #from django.conf import settings
 import json
@@ -129,9 +129,9 @@ class GetMicroURL(ListAPIView):
 
         # we passed the basic checks so continue
         if self.uuid:
-            return BuildAPIResponse(request=request, qs=queryset, url=self.micro_url, uuid=self.uuid)
+            return build_api_response(request=request, qs=queryset, url=self.micro_url, uuid=self.uuid)
         else:
-            return BuildAPIResponse(request=request, qs=queryset, url=self.micro_url)
+            return build_api_response(request=request, qs=queryset, url=self.micro_url)
 
 # -----------------------------------------------------------------------------
 
@@ -150,12 +150,13 @@ def _call_response_builder(request, **kwargs):
         micro_url = apiserver.settings.APISERVER_URL + kwargs.get('micro_url')
         uuid1 = kwargs.get('uuid1')
 
-        logger.debug("MicroURL is [%s]",micro_url)
-        logger.debug("UUID1 is [%s]",uuid1)
+        logger.debug("MicroURL is [%s]", micro_url)
+        logger.debug("UUID1 is [%s]", uuid1)
+        logger.debug("req.GET.dict() is [%s]", request.GET.dict())
 
         if uuid1:
-            qs = micro_url + '/<uuid1>'
-            queryset = URL.objects.filter(apiserver_url=qs).filter(active=True)
+            url = micro_url + '/<uuid1>'
+            queryset = URL.objects.filter(apiserver_url=url).filter(active=True)
             #queryset = URL.objects.filter(apiserver_url__icontains=micro_url).filter(active=True)
         else:
             queryset = URL.objects.filter(apiserver_url=micro_url).filter(active=True) 
@@ -165,8 +166,7 @@ def _call_response_builder(request, **kwargs):
         if not passes:
             return response
 
-        logger.debug("Passed basic checks")
-        return BuildAPIResponse(request=request, qs=queryset, url=micro_url, uuid1=uuid1)
+        return build_api_response(request=request, qs=queryset, url=micro_url, uuid1=uuid1)
 
 # -----------------------------------------------------------------------------
 

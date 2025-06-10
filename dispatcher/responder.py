@@ -7,14 +7,11 @@ from rest_framework import status
 from rest_framework.response import Response
 from reverse_proxy.microservice import fetch_data
 from django.conf import settings
+import copy
 
 import operator
-import time
 import json
 import re
-import os
-import requests
-from requests.auth import HTTPBasicAuth
 
 # get an instance of a logger
 import logging
@@ -34,7 +31,7 @@ HOP_BY_HOP_HEADERS = ['Connection',
 
 # -----------------------------------------------------------------------------
 
-def BuildAPIResponse(**kwargs):
+def build_api_response(**kwargs):
 
     request = kwargs['request']
     queryset = kwargs['qs']
@@ -43,7 +40,7 @@ def BuildAPIResponse(**kwargs):
     if 'uuid1' in kwargs:
         uuid1 = kwargs['uuid1']
 
-    logger.debug("BuildAPIResponse")
+    logger.debug("build_api_response")
 
     dicky = queryset.values('api_rules').get()
     api_rules = dicky.get('api_rules')
@@ -81,6 +78,8 @@ def BuildAPIResponse(**kwargs):
             full_url = settings.ADDRESS_SERVER_URL
         elif microservice_name == 'aws':
             full_url = settings.AWS_SERVER_URL
+        elif microservice_name == 'fotos':
+            full_url = settings.FOTOS_SERVER_URL
         else:
             return Response({ 'message': 'Missing server URL' }, status=status.HTTP_501_NOT_IMPLEMENTED)
 
@@ -107,8 +106,8 @@ def BuildAPIResponse(**kwargs):
             fields.append(dic_of_fields)
             count += 1
 
-    logger.info("FULL OUTGOING URLS:")
-    logger.info(full_urls)
+    logger.debug("Full outgoing URLS:")
+    logger.debug(full_urls)
 
     errors = []
     if len(full_urls) > 0: 
@@ -133,6 +132,8 @@ def BuildAPIResponse(**kwargs):
 # of the returned fields to something else
 
 def _builder(results, fields, request_path, request_method, uuid):
+
+    # TODO: Rethink this entire matching thing
 
     # the data should be in the form of an array of dicts. the dicts consists 
     # of a requests response and the original incoming request
@@ -175,6 +176,55 @@ def _builder(results, fields, request_path, request_method, uuid):
                 # the name of the field to what we wanted from the api rules
                 # database field
                 out_dic[wanted_field.get(key)] = big_dict.get(key)
+
+    # this is where we try and get 2nd level name changes from an array of things
+    # TODO: make recursive?
+    save_list = []
+
+    for wanted_field in big_dict['fields']:
+        for key, value in wanted_field.items():
+            split_key = key.split("::")
+            split_value = value.split("::")
+            if len(split_key) > 1:
+                # save both the key and the value as when
+                # we check below not all fields have been changed
+                # and the key and value are the before and after
+                # fieldnames
+                save_list.append(split_value[1])
+                save_list.append(split_key[1])
+
+    logger.debug("Save list is [%s]", save_list)
+
+    for wanted_field in big_dict['fields']:
+        for key, value in wanted_field.items():
+            split_key = key.split("::")
+            split_value = value.split("::")
+            if len(split_key) == 2:
+                # we have a match on ::
+                if split_key[0] in out_dic:
+                    # found top level field in output
+                    if isinstance(out_dic[split_key[0]], list):
+                        # it's an array of tings i.e. "users": [ {"user": "jon"}, {"user": "pam"} ]
+                        new_things = []
+                        for thing in out_dic[split_key[0]]:
+                            temp_thing = copy.copy(thing)
+
+                            for k, v in temp_thing.items():
+                                if k == split_key[1]:
+                                    # remove old name and put new name;
+                                    # must be in this order or we delete
+                                    # field names that don't change
+                                    thing.pop(split_key[1], None)
+                                    thing[split_value[1]] = v
+
+                                if k not in save_list:
+                                    # remove all unwanted fields
+                                    thing.pop(k, None)
+
+                            new_things.append(thing)
+
+                        # overwrite the original array with the new array
+                        out_dic[split_key[0]] = new_things
 
     if settings.ENVIRONMENT == "DEV":
         out_dic['request_url'] = request_path
