@@ -205,15 +205,13 @@ def _builder(results, fields, request_path, request_method, uuid):
                     # found top level field in output
                     if isinstance(out_dic[split_key[0]], list):
                         # it's an array of tings i.e. "users": [ {"user": "jon"}, {"user": "pam"} ]
-                        new_things = []
+                        updated_things = []
                         for thing in out_dic[split_key[0]]:
                             temp_thing = copy.copy(thing)
 
                             for k, v in temp_thing.items():
                                 if k == split_key[1]:
-                                    # remove old name and put new name;
-                                    # must be in this order or we delete
-                                    # field names that don't change
+                                    # remove old name and insert new name
                                     thing.pop(split_key[1], None)
                                     thing[split_value[1]] = v
 
@@ -221,10 +219,10 @@ def _builder(results, fields, request_path, request_method, uuid):
                                     # remove all unwanted fields
                                     thing.pop(k, None)
 
-                            new_things.append(thing)
+                            updated_things.append(thing)
 
-                        # overwrite the original array with the new array
-                        out_dic[split_key[0]] = new_things
+                        # overwrite the original list with the updated one
+                        out_dic[split_key[0]] = updated_things
 
     if settings.ENVIRONMENT == "DEV":
         out_dic['request_url'] = request_path
@@ -238,7 +236,7 @@ def _builder(results, fields, request_path, request_method, uuid):
     return Response(out_dic, status=stts)
 
 # -----------------------------------------------------------------------------
-# need to remove any hop-by-hop headers and django says no to these and kicks
+# need to remove any hop-by-hop headers as django says no to these and kicks
 # up a fuss
 
 def _build_headers(headers):
