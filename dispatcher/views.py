@@ -149,18 +149,21 @@ def _call_response_builder(request, **kwargs):
 
         micro_url = apiserver.settings.APISERVER_URL + kwargs.get('micro_url')
         uuid1 = kwargs.get('uuid1')
+        end_url = kwargs.get('end_url')
+        ca_int = kwargs.get('ca_int')
 
         logger.debug("MicroURL is [%s]", micro_url)
         logger.debug("UUID1 is [%s]", uuid1)
+        logger.debug("End url is [%s]", end_url)
         logger.debug("req.GET.dict() is [%s]", request.GET.dict())
+        logger.debug("check access int is [%d]", ca_int)
 
         if uuid1:
-            url = micro_url + '/<uuid1>'
-            queryset = URL.objects.filter(apiserver_url=url).filter(active=True)
-            #queryset = URL.objects.filter(apiserver_url__icontains=micro_url).filter(active=True)
-        else:
-            queryset = URL.objects.filter(apiserver_url=micro_url).filter(active=True) 
+            micro_url += '/<uuid1>'
+        elif ca_int:
+            micro_url += '/<ca_int>'
 
+        queryset = URL.objects.filter(apiserver_url=micro_url).filter(active=True)
         passes, response = _passes_basic_checks(request, queryset, micro_url)
 
         if not passes:

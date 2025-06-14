@@ -13,6 +13,8 @@ urlpatterns = [
         # TODO: improve the url matching
         path('api/dispatcher/auth/', include('rest_framework.urls', namespace='rest_framework')),
         re_path(r'^api/dispatcher/urls/$', CreateView.as_view(), name="create"),
+        path('api/<slug:micro_url>/<int:ca_int>', GetMicroserviceData.as_view(), name="micro_details"),
+        path('api/<slug:micro_url>/<uuid:uuid1>/<slug:end_url>', GetMicroserviceData.as_view(), name="micro_details"),
         path('api/<slug:micro_url>/<uuid:uuid1>', GetMicroserviceData.as_view(), name="micro_details"),
         #path('api/<slug:micro_url>/<slug:slug1>', GetMicroserviceData.as_view(), name="micro_details"),
         re_path(r'^api/(?P<micro_url>.+)/?$', GetMicroserviceData.as_view(), name="micro_details"),
