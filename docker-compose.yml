@@ -5,10 +5,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: poptape/apiserver/api:v0.1
+    environment:
+      - "PORT=${PORT}"
+    image: poptape/apiserver/api:v${VERSION}
     #TODO: change ports to expose when going into prod and using an apiserver to manage incoming
     ports:
-      - "1270:9500"
+      - "1270:${PORT}"
     restart: always
     volumes:
       - ${LOCAL_LOG_LOC}:${LOGFILE}

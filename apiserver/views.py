@@ -22,7 +22,7 @@ class StatusView(RetrieveAPIView):
         # simply returns a 200 ok with a message 
         logger.info("apiserver/views/StatusView.get")
 
-        message = { 'message': 'System running...' }
+        message = { 'message': 'System running...', 'version': settings.VERSION }
 
         return Response(message, status=status.HTTP_200_OK)
 
