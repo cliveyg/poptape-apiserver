@@ -26,7 +26,8 @@ Django administration panel.
 
 For api endpoints where you want to return all fields then a field *return_all* 
 can be added and then the fields json is ignored;
-To only return selected fields then completely remove the *return_all* json element.
+To only return selected fields either completely remove the *return_all* json element
+or set it to false.
 This is useful if the returned data can have variable fields or for testing the 
 api_server microservice.
 Example below:
