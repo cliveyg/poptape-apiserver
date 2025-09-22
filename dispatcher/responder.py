@@ -101,7 +101,7 @@ def build_api_response(**kwargs):
         dic_of_urls = {'track_id': count, 'url': full_url}
         all_fields = False
         if 'return_all' in destination:
-            all_fields = True
+            all_fields = destination['return_all']
         dic_of_fields = {'track_id': count, 'fields': destination['fields'], 'return_all': all_fields}
 
         if not error:
