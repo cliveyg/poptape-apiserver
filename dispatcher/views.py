@@ -147,29 +147,35 @@ class GetItemURL(ListAPIView):
 
 def _call_response_builder(request, **kwargs):
 
-        micro_url = apiserver.settings.APISERVER_URL + kwargs.get('micro_url')
+        apiserver_url = apiserver.settings.APISERVER_URL + kwargs.get('micro_url')
         uuid1 = kwargs.get('uuid1')
         end_url = kwargs.get('end_url')
         ca_int = kwargs.get('ca_int')
 
-        logger.debug("MicroURL is [%s]", micro_url)
+        logger.debug("MicroURL is [%s]", apiserver_url)
         logger.debug("UUID1 is [%s]", uuid1)
         logger.debug("End url is [%s]", end_url)
         logger.debug("req.GET.dict() is [%s]", request.GET.dict())
         logger.debug("check access int is [%d]", ca_int)
 
         if uuid1:
-            micro_url += '/<uuid1>'
+            apiserver_url += '/<uuid1>'
         elif ca_int:
-            micro_url += '/<ca_int>'
+            apiserver_url += '/<ca_int>'
 
-        queryset = URL.objects.filter(apiserver_url=micro_url).filter(active=True)
-        passes, response = _passes_basic_checks(request, queryset, micro_url)
+        if end_url:
+            apiserver_url += '/'
+            apiserver_url += end_url
+
+        logger.debug("apiserver_URL is [%s]", apiserver_url)
+
+        queryset = URL.objects.filter(apiserver_url=apiserver_url).filter(active=True)
+        passes, response = _passes_basic_checks(request, queryset, apiserver_url)
 
         if not passes:
             return response
 
-        return build_api_response(request=request, qs=queryset, url=micro_url, uuid1=uuid1)
+        return build_api_response(request=request, qs=queryset, url=apiserver_url, uuid1=uuid1)
 
 # -----------------------------------------------------------------------------
 
@@ -177,7 +183,7 @@ def _passes_basic_checks(request, queryset, url):
 
     if queryset.count() == 0:
         #return False, Response(status=status.HTTP_404_NOT_FOUND)
-        message = { 'message': 'Nowt found', 'request_url': request.path }
+        message = { 'message': 'Nowt found.', 'request_url': request.path }
         return False, Response(message, status=status.HTTP_404_NOT_FOUND)
 
     if request.content_type != "application/json":
