@@ -22,7 +22,28 @@ the input url and are of the format:
 to can be anything. Output field names should be unique but json schema (v7)
 does not currently have any facility to check this - so user beware. The json
 schema validates against the model when a user attempts to enter rules in the 
-Django administration panel.
+Django administration panel. 
+
+For api endpoints where you want to return all fields then a field *return_all* 
+can be added and then the fields json is ignored;
+To only return selected fields then completely remove the *return_all* json element.
+This is useful if the returned data can have variable fields or for testing the 
+api_server microservice.
+Example below:
+
+```
+  { 
+    "url": "items/<uuid1>", 
+    "pass_data": true,
+    "return_all": true,
+    "fields": [
+      {"name": "name"},
+      {"description": "description"},
+      {"category": "category"},
+      {"location": "location"}
+    ]
+  }
+```
 
 Also added via the Django admin are the incoming url and rules for allowed 
 verbs and whether an api path is currently active. IP address restrictions can

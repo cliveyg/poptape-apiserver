@@ -59,7 +59,7 @@ def build_api_response(**kwargs):
 
     for destination in url_list:
         full_url = None
-        fields_dict = None
+        # fields_dict = None
         error = False
 
         if "/" in destination['url']:
@@ -99,7 +99,10 @@ def build_api_response(**kwargs):
         # api rule. a simple count can achieve this. we need to do this as we're 
         # sending async requests and can't guarantee return order
         dic_of_urls = {'track_id': count, 'url': full_url}
-        dic_of_fields = {'track_id': count, 'fields': destination['fields']}
+        all_fields = False
+        if 'return_all' in destination:
+            all_fields = True
+        dic_of_fields = {'track_id': count, 'fields': destination['fields'], 'return_all': all_fields}
 
         if not error:
             full_urls.append(dic_of_urls)
@@ -138,6 +141,7 @@ def _builder(results, fields, request_path, request_method, uuid):
     # the data should be in the form of an array of dicts. the dicts consists 
     # of a requests response and the original incoming request
     response_fields = []
+    logger.debug("******** _builder *********")
 
     # we now create one big dictionary with all our returned data. that data
     # can be identified by the track_id and matched to what we want our 
@@ -162,67 +166,90 @@ def _builder(results, fields, request_path, request_method, uuid):
     sorting_key = operator.itemgetter("track_id")
     response_fields = sorted(response_fields, key=sorting_key)
     fields = sorted(fields, key=sorting_key)
+
+    logger.debug("FIELDS AFTER SORTING")
+    logger.debug(fields)
     out_dic = {}
 
     # we then use zip to join our dicts
     for big_dict, j in zip(response_fields, fields):
+        logger.debug("----- AFTER ZIP -----")
         big_dict.update(j)
-        # we then match using sets / dicts
-        for wanted_field in big_dict['fields']:
-            for key in set(wanted_field) & set(big_dict):
-                # and finally we want the value of the wanted field to be the
-                # key of our new field and the value of that to be the returned 
-                # value from the microservice(s). this effectively transforms
-                # the name of the field to what we wanted from the api rules
-                # database field
-                out_dic[wanted_field.get(key)] = big_dict.get(key)
+        logger.debug(big_dict['return_all'])
 
+        if big_dict['return_all']:
+            # we return all fields from response after removing certain fields
+            out_dic = big_dict
+            if 'return_all' in out_dic:
+                del out_dic['return_all']
+            if 'pass_data' in out_dic:
+                del out_dic['pass_data']
+            if 'url' in out_dic:
+                del out_dic['url']
+            if 'fields' in out_dic:
+                del out_dic['fields']
+            if 'track_id' in out_dic:
+                del out_dic['track_id']
+        else:
+            # we then match using sets / dicts
+            for wanted_field in big_dict['fields']:
+                for key in set(wanted_field) & set(big_dict):
+                    # and finally we want the value of the wanted field to be the
+                    # key of our new field and the value of that to be the returned
+                    # value from the microservice(s). this effectively transforms
+                    # the name of the field to what we wanted from the api rules
+                    # database field
+                    out_dic[wanted_field.get(key)] = big_dict.get(key)
+
+    # logger.debug(big_dict['fields'])
     # this is where we try and get 2nd level name changes from an array of things
     # TODO: make recursive?
     save_list = []
 
-    for wanted_field in big_dict['fields']:
-        for key, value in wanted_field.items():
-            split_key = key.split("::")
-            split_value = value.split("::")
-            if len(split_key) > 1:
-                # save both the key and the value as when
-                # we check below not all fields have been changed
-                # and the key and value are the before and after
-                # fieldnames
-                save_list.append(split_value[1])
-                save_list.append(split_key[1])
+    if not big_dict['return_all']:
 
-    logger.debug("Save list is [%s]", save_list)
+        for wanted_field in big_dict['fields']:
+            for key, value in wanted_field.items():
+                split_key = key.split("::")
+                split_value = value.split("::")
+                if len(split_key) > 1:
+                    # save both the key and the value as when
+                    # we check below not all fields have been changed
+                    # and the key and value are the before and after
+                    # fieldnames
+                    save_list.append(split_value[1])
+                    save_list.append(split_key[1])
 
-    for wanted_field in big_dict['fields']:
-        for key, value in wanted_field.items():
-            split_key = key.split("::")
-            split_value = value.split("::")
-            if len(split_key) == 2:
-                # we have a match on ::
-                if split_key[0] in out_dic:
-                    # found top level field in output
-                    if isinstance(out_dic[split_key[0]], list):
-                        # it's an array of tings i.e. "users": [ {"user": "jon"}, {"user": "pam"} ]
-                        updated_things = []
-                        for thing in out_dic[split_key[0]]:
-                            temp_thing = copy.copy(thing)
+        logger.debug("Save list is [%s]", save_list)
 
-                            for k, v in temp_thing.items():
-                                if k == split_key[1]:
-                                    # remove old name and insert new name
-                                    thing.pop(split_key[1], None)
-                                    thing[split_value[1]] = v
+        for wanted_field in big_dict['fields']:
+            for key, value in wanted_field.items():
+                split_key = key.split("::")
+                split_value = value.split("::")
+                if len(split_key) == 2:
+                    # we have a match on ::
+                    if split_key[0] in out_dic:
+                        # found top level field in output
+                        if isinstance(out_dic[split_key[0]], list):
+                            # it's an array of tings i.e. "users": [ {"user": "jon"}, {"user": "pam"} ]
+                            updated_things = []
+                            for thing in out_dic[split_key[0]]:
+                                temp_thing = copy.copy(thing)
 
-                                if k not in save_list:
-                                    # remove all unwanted fields
-                                    thing.pop(k, None)
+                                for k, v in temp_thing.items():
+                                    if k == split_key[1]:
+                                        # remove old name and insert new name
+                                        thing.pop(split_key[1], None)
+                                        thing[split_value[1]] = v
 
-                            updated_things.append(thing)
+                                    if k not in save_list:
+                                        # remove all unwanted fields
+                                        thing.pop(k, None)
 
-                        # overwrite the original list with the updated one
-                        out_dic[split_key[0]] = updated_things
+                                updated_things.append(thing)
+
+                            # overwrite the original list with the updated one
+                            out_dic[split_key[0]] = updated_things
 
     if settings.ENVIRONMENT == "DEV":
         out_dic['request_url'] = request_path

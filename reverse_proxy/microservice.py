@@ -30,6 +30,9 @@ def fetch_data(**kwargs):
     request = kwargs['request']
     upstream_urls = kwargs['upstream_urls']
     good_codes = kwargs['good_codes']
+    logger.debug("In fetch data")
+    logger.debug("GOOD CODES:")
+    logger.debug(good_codes)
     # make good_codes an array
     good_codes = [int(i) for i in good_codes.split()]
 
